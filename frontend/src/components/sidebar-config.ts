@@ -17,7 +17,7 @@ export const SidebarConfig = {
     },
     {
       title: "Retrait / Dépôt",
-      url: "retrait-depot",
+      url: "/deposit-withdraw",
       icon: Users,
     },
     {

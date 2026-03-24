@@ -13,3 +13,11 @@ export const executeTransactionSchema = verifyTransactionSchema.extend({
   toBeneficiaryName: z.string().min(1, "Le nom du bénéficiaire est requis"),
   motif: z.string().max(140).optional(),
 });
+
+export const depositSchema = z.object({
+  accountId: z.number().int().positive("L'identifiant du compte est invalide"),
+  amount: z.number().positive("Le montant doit être strictement supérieur à 0"),
+  description: z.string().max(140).optional(),
+});
+
+export const withdrawalSchema = depositSchema;

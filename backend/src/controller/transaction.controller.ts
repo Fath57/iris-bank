@@ -26,6 +26,8 @@ const verify = async (req: Request, res: Response) => {
   }
 };
 
+
+
 const execute = async (req: Request, res: Response) => {
   const { fromAccountIban, toBeneficiaryIban, amount, toBeneficiaryName, motif } = req.body;
   
@@ -109,4 +111,97 @@ const execute = async (req: Request, res: Response) => {
   }
 };
 
-export { verify, execute };
+
+
+const deposit = async (req: Request, res: Response) => {
+  const { accountId, amount, description } = req.body;
+
+  if (!req.user?.id) return res.status(401).json({ message: "Non autorisé" });
+  const userId = Number(req.user.id);
+
+  if (!amount || amount <= 0)
+    return res.status(400).json({ message: "Montant invalide" });
+
+  try {
+    const result = await prisma.$transaction(async (tx) => {
+      const account = await tx.bankAccount.findUnique({ where: { id: accountId } });
+
+      if (!account || account.userId !== userId)
+        throw new Error("Compte non autorisé ou introuvable");
+
+      if (account.status !== "ACTIVE")
+        throw new Error("Ce compte n'est pas actif");
+
+      const updatedAccount = await tx.bankAccount.update({
+        where: { id: accountId },
+        data: { balance: { increment: amount } },
+      });
+
+      const transaction = await tx.transaction.create({
+        data: {
+          type: "DEPOSIT",
+          amount,
+          description: description || "Dépôt",
+          accountId,
+        },
+      });
+
+      return { transaction, newBalance: updatedAccount.balance };
+    });
+
+    return res.status(201).json({ status: "success", data: result });
+  } catch (error: any) {
+    console.error("Erreur dépôt:", error);
+    return res.status(400).json({ message: error.message || "Dépôt échoué" });
+  }
+};
+
+
+
+const withdrawal = async (req: Request, res: Response) => {
+  const { accountId, amount, description } = req.body;
+
+  if (!req.user?.id) return res.status(401).json({ message: "Non autorisé" });
+  const userId = Number(req.user.id);
+
+  if (!amount || amount <= 0)
+    return res.status(400).json({ message: "Montant invalide" });
+
+  try {
+    const result = await prisma.$transaction(async (tx) => {
+      const account = await tx.bankAccount.findUnique({ where: { id: accountId } });
+
+      if (!account || account.userId !== userId)
+        throw new Error("Compte non autorisé ou introuvable");
+
+      if (account.status !== "ACTIVE")
+        throw new Error("Ce compte n'est pas actif");
+
+      if (Number(account.balance) < amount)
+        throw new Error("Solde insuffisant");
+
+      const updatedAccount = await tx.bankAccount.update({
+        where: { id: accountId },
+        data: { balance: { decrement: amount } },
+      });
+
+      const transaction = await tx.transaction.create({
+        data: {
+          type: "WITHDRAWAL",
+          amount,
+          description: description || "Retrait",
+          accountId,
+        },
+      });
+
+      return { transaction, newBalance: updatedAccount.balance };
+    });
+
+    return res.status(201).json({ status: "success", data: result });
+  } catch (error: any) {
+    console.error("Erreur retrait:", error);
+    return res.status(400).json({ message: error.message || "Retrait échoué" });
+  }
+};
+
+export { verify, execute, deposit, withdrawal };

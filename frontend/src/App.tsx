@@ -6,11 +6,10 @@ import SignupPage from "./pages/SignupPage"
 import DashboardLayout from "./components/layouts/dashboard-layout"
 import DashboardPage from "./pages/DashboardHomePage"
 import ProtectedRoute from "./components/ProtectedRoute"
-
-// Importe ton nouveau wrapper
 import AuthInitializer from "./components/AuthInitializer"
 import MyAccountsPage from "./pages/MyAccountsPage"
 import NewTransactionPage from "./pages/NewTransactionPage"
+import DepositWithdrawalPage from "./pages/DepositWithdrawalPage"
 
 const queryClient = new QueryClient();
 
@@ -52,6 +51,13 @@ const router = createBrowserRouter([
         element: <DashboardLayout />,
         children: [
           { index: true, element: <NewTransactionPage /> },
+        ]
+      },
+      {
+        path: "/deposit-withdraw",
+        element: <DashboardLayout />,
+        children: [
+          { index: true, element: <DepositWithdrawalPage /> },
         ]
       }
     ]

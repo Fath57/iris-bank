@@ -31,7 +31,7 @@ export default function MyAccountsPage() {
     <div className="space-y-6 p-6">
       <TotalBanner total={totalBalance} userName={user?.firstName} />
 
-      <div className="flex items-center justify-between mb-6 mt-14">
+      <div className="flex items-center justify-between mb-6 mt-8">
         <div>
           <h2 className="text-2xl text-foreground font-bold tracking-tight">Mes comptes</h2>
         </div>

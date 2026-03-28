@@ -84,4 +84,51 @@ const getUserAccounts = async (req: Request, res: Response) => {
   }
 };
 
-export { create, getUserAccounts };
+const getAccountById = async (req: Request, res: Response) => {
+  try {
+    const accountId = Number(req.params.id);
+    
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: "Non autorisé" });
+    }
+    const userId = Number(req.user.id);
+
+    if (isNaN(accountId)) {
+      return res.status(400).json({ message: "ID de compte invalide" });
+    }
+
+    const account = await prisma.bankAccount.findUnique({
+      where: { id: accountId },
+      include: {
+        transactions: {
+          orderBy: { date: 'desc' }
+        },
+        user: {
+          select: { firstName: true, lastName: true }
+        }
+      }
+    });
+
+    if (!account) {
+      return res.status(404).json({ message: "Compte introuvable" });
+    }
+
+    if (account.userId !== userId) {
+      return res.status(403).json({ message: "Accès refusé à ce compte" });
+    }
+
+    return res.status(200).json({
+      status: "success",
+      data: {
+        ...account,
+        balance: Number(account.balance) 
+      }
+    });
+
+  } catch (error) {
+    console.error("Erreur lors de la récupération du compte:", error);
+    return res.status(500).json({ message: "Erreur interne du serveur" });
+  }
+};
+
+export { create, getUserAccounts, getAccountById };

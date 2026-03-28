@@ -2,7 +2,7 @@ import { TrendingUp, TrendingDown, ChevronRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { formatAmount, formatDate } from "@/lib/format";
+import { formatAmount, formatDateLong } from "@/lib/format";
 import type { Transaction } from "@/types/Banking";
 
 interface TransactionHistoryProps {
@@ -40,7 +40,7 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium truncate">{tx.description ?? tx.type}</p>
-                    <p className="text-[10px] text-muted-foreground">{formatDate(tx.date)}</p>
+                    <p className="text-[10px] text-muted-foreground">{formatDateLong(tx.date)}</p>
                   </div>
                   <span className={cn(
                     "text-xs font-semibold tabular-nums shrink-0",

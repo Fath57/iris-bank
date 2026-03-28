@@ -116,7 +116,7 @@ export function AccountCard({ account }: { account: any }) {
         </div>
       </CardContent>
 
-      <CardFooter className="pb-3 mt-auto">
+      <CardFooter className="mt-1">
         <Button size="lg" className="w-full text-xs font-medium gap-1.5" tabIndex={-1}>
           Voir le compte
           <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />

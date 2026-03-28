@@ -10,6 +10,8 @@ import AuthInitializer from "./components/AuthInitializer"
 import MyAccountsPage from "./pages/MyAccountsPage"
 import NewTransactionPage from "./pages/NewTransactionPage"
 import DepositWithdrawalPage from "./pages/DepositWithdrawalPage"
+import AccountDetailPage from "./pages/AccountDetailPage"
+import CreateAccountPage from "./pages/CreateAccountPage"
 
 const queryClient = new QueryClient();
 
@@ -36,7 +38,6 @@ const router = createBrowserRouter([
           { index: true, element: <DashboardPage /> },
           { path: "settings", element: <div>Page Paramètres</div> },
           { path: "users", element: <div>Page Utilisateurs</div> },
-          //{ path: "accounts/:id", element: <AccountDetailPage /> }
         ]
       },
       {
@@ -44,6 +45,20 @@ const router = createBrowserRouter([
         element: <DashboardLayout />,
         children: [
           { index: true, element: <MyAccountsPage /> },
+        ]
+      },
+      {
+        path: "/accounts/create",
+        element: <DashboardLayout />,
+        children: [
+          { index: true, element: <CreateAccountPage /> },
+        ]
+      },
+      {
+        path: "/accounts/:id", 
+        element: <DashboardLayout />,
+        children: [
+          { index: true, element: <AccountDetailPage /> },
         ]
       },
       {

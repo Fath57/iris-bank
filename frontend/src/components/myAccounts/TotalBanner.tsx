@@ -1,4 +1,4 @@
-import { ArrowLeftRight } from "lucide-react";
+import { ArrowLeftRight, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { formatAmount } from "@/lib/format";
@@ -26,9 +26,9 @@ export function TotalBanner({ total, userName }: TotalBannerProps) {
         <p className="text-3xl font-semibold tracking-tight py-2">{formatAmount(total)}</p>
         <p className="text-xs text-muted-foreground">Solde total consolidé</p>
       </div>
-      <Button size="lg" onClick={() => navigate("/transactions/new")}>
-        <ArrowLeftRight className="mr-2 h-3.5 w-3.5" />
-        Nouveau virement
+      <Button size="lg" onClick={() => navigate("/accounts/create")}>
+        <Plus className="mr-2 h-3.5 w-3.5" />
+        Créer un compte
       </Button>
     </div>
   );

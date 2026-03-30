@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
-import { TransactionRecap } from "@/components/transaction/TransactionRecap";
-import { TransactionForm } from "@/components/transaction/TransactionForm";
-import { ConfirmTransactionModal } from "@/components/transaction/ConfirmTransactionModal";
+import { TransactionRecap } from "@/components/newTransaction/TransactionRecap";
+import { TransactionForm } from "@/components/newTransaction/TransactionForm";
+import { ConfirmTransactionModal } from "@/components/newTransaction/ConfirmTransactionModal";
 import type { TransactionFormValues } from "@/types/TransactionForm";
 import { useAccounts } from "@/hooks/useAccounts";
 import { useVerifyTransaction, useExecuteTransaction } from "@/hooks/useTransactions";

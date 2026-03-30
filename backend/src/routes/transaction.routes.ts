@@ -1,5 +1,5 @@
 import express from "express";
-import { verify, execute, withdrawal, deposit } from "../controller/transaction.controller.js";
+import { verify, execute, withdrawal, deposit, getRecent } from "../controller/transaction.controller.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
 import { validateRequest } from "../middleware/validateRequest.middleware.js";
 import { verifyTransactionSchema, executeTransactionSchema, depositSchema, withdrawalSchema } from "../validators/transaction.validators.js";
@@ -7,6 +7,8 @@ import { verifyTransactionSchema, executeTransactionSchema, depositSchema, withd
 const router = express.Router();
 
 router.use(authMiddleware);
+
+router.get("/recent", getRecent);
 
 router.post("/verify", validateRequest(verifyTransactionSchema), verify);
 

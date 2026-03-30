@@ -12,6 +12,7 @@ import NewTransactionPage from "./pages/NewTransactionPage"
 import DepositWithdrawalPage from "./pages/DepositWithdrawalPage"
 import AccountDetailPage from "./pages/AccountDetailPage"
 import CreateAccountPage from "./pages/CreateAccountPage"
+import TransactionsPage from "./pages/TransactionsPage"
 
 const queryClient = new QueryClient();
 
@@ -59,6 +60,13 @@ const router = createBrowserRouter([
         element: <DashboardLayout />,
         children: [
           { index: true, element: <AccountDetailPage /> },
+        ]
+      },
+      {
+        path: "/transactions",
+        element: <DashboardLayout />,
+        children: [
+          { index: true, element: <TransactionsPage /> },
         ]
       },
       {

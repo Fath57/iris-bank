@@ -1,5 +1,5 @@
 import { ArrowDownToLine, ArrowUpFromLine, Loader2 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
@@ -27,17 +27,14 @@ export function OperationSummary({
 
   return (
     <Card className="overflow-hidden">
-      <div className={cn(
-        "px-5 py-4 border-b",
-        isDeposit ? "bg-emerald-50 border-emerald-100" : "bg-red-50 border-red-100"
-      )}>
+      <CardHeader className="">
         <p className={cn(
-          "text-xs font-medium uppercase tracking-widest",
+          "text-xs font-semibold uppercase tracking-widest",
           isDeposit ? "text-emerald-600" : "text-red-500"
         )}>
           Récapitulatif
         </p>
-      </div>
+      </CardHeader>
 
       <CardContent className="pt-5 space-y-4">
         <div className="space-y-3 text-sm">

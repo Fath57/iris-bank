@@ -101,7 +101,8 @@ const getAccountById = async (req: Request, res: Response) => {
       where: { id: accountId },
       include: {
         transactions: {
-          orderBy: { date: 'desc' }
+          orderBy: { date: 'desc' },
+          include: { beneficiary: true },
         },
         user: {
           select: { firstName: true, lastName: true }
@@ -131,4 +132,69 @@ const getAccountById = async (req: Request, res: Response) => {
   }
 };
 
-export { create, getUserAccounts, getAccountById };
+
+const getStats = async (req: Request, res: Response) => {
+  try {
+    if (!req.user?.id) {
+      return res.status(401).json({ message: "Non autorisé" });
+    }
+ 
+    const userId = Number(req.user.id);
+ 
+    // Une seule requête : tous les comptes actifs + leur dernière transaction
+    const accounts = await prisma.bankAccount.findMany({
+      where: { userId, status: "ACTIVE" },
+      select: {
+        type: true,
+        balance: true,
+        transactions: {
+          orderBy: { date: "desc" },
+          take: 1,
+          select: {
+            id: true,
+            type: true,
+            amount: true,
+            description: true,
+            date: true,
+          },
+        },
+      },
+    });
+ 
+    // Agrégats
+    const totalBalance = accounts.reduce(
+      (sum, a) => sum + Number(a.balance),
+      0
+    );
+ 
+    const checkingBalance = accounts
+      .filter((a) => a.type === "CHECKING")
+      .reduce((sum, a) => sum + Number(a.balance), 0);
+ 
+    const savingsBalance = accounts
+      .filter((a) => a.type === "SAVINGS")
+      .reduce((sum, a) => sum + Number(a.balance), 0);
+ 
+    // Dernière transaction : on aplatit toutes les transactions récupérées
+    // (1 par compte) et on prend la plus récente
+    const lastTransaction = accounts
+      .flatMap((a) => a.transactions)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .at(0) ?? null;
+ 
+    return res.status(200).json({
+      status: "success",
+      data: {
+        totalBalance,
+        checkingBalance,
+        savingsBalance,
+        lastTransaction,
+      },
+    });
+  } catch (error) {
+    console.error("Erreur lors de la récupération des stats:", error);
+    return res.status(500).json({ message: "Erreur interne du serveur" });
+  }
+};
+
+export { create, getUserAccounts, getAccountById, getStats };

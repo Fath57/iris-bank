@@ -1,5 +1,5 @@
 import express from "express";
-import { create, getAccountById, getUserAccounts } from "../controller/bankAccount.controller.js";
+import { create, getAccountById, getStats, getUserAccounts } from "../controller/bankAccount.controller.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
 import { validateRequest } from "../middleware/validateRequest.middleware.js";
 import { createBankAccountSchema } from "../validators/bankAccount.validators.js";
@@ -12,7 +12,10 @@ router.post("/create", validateRequest(createBankAccountSchema), create);
 
 router.get("/getByUser", getUserAccounts);
 
+router.get("/stats", getStats);
+
 router.get("/:id", getAccountById);
+
 
 // router.delete("/:id", delete);
 

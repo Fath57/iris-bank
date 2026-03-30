@@ -75,7 +75,7 @@ export function AccountCard({ account }: { account: any }) {
 
         <Separator className="opacity-50" />
 
-        <div className="space-y-2">
+        <div className="space-y-2 min-h-26 mt-4">
           {account.transactions?.length === 0 ? (
             <p className="text-xs text-muted-foreground text-center py-2">Aucune transaction récente</p>
           ) : (

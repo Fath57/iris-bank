@@ -7,75 +7,108 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Loader2 } from "lucide-react";
+import { useRecentTransactions } from "@/hooks/useDashboard";
+import type { RecentTransaction } from "@/types/Dashboard";
 
-type TransactionType = "virement" | "retrait" | "depot";
-
-type Transaction = {
-  id: number;
-  label: string;
-  date: string;
-  type: TransactionType;
-  montant: number;
+// Libellés FR pour les types de transaction
+const typeLabel: Record<RecentTransaction["type"], string> = {
+  DEPOSIT: "Dépôt",
+  WITHDRAWAL: "Retrait",
+  TRANSFER: "Virement",
+  PAYMENT: "Paiement",
 };
 
-const transactions: Transaction[] = [
-  { id: 1, label: "Virement reçu — Jean Dupont", date: "17 mars 2026", type: "virement", montant: 500 },
-  { id: 2, label: "Retrait DAB", date: "17 mars 2026", type: "retrait", montant: -45 },
-  { id: 3, label: "Dépôt espèces", date: "15 mars 2026", type: "depot", montant: 200 },
-  { id: 4, label: "Virement envoyé — Marie Martin", date: "14 mars 2026", type: "virement", montant: -150 },
-  { id: 5, label: "Retrait DAB", date: "12 mars 2026", type: "retrait", montant: -60 },
-];
+const formatAmount = (amount: number) =>
+  amount.toLocaleString("fr-FR", { minimumFractionDigits: 2 });
 
-const badgeVariant = {
-  virement: "secondary",
-  retrait: "secondary",
-  depot: "secondary",
-} as const;
+const formatDate = (dateStr: string) =>
+  new Date(dateStr).toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+const isCredit = (tx: RecentTransaction) => tx.type === "DEPOSIT";
 
 export default function RecentTransactions() {
+  const { data: transactions, isLoading, isError } = useRecentTransactions(5);
+
+  if (isLoading) {
+    return (
+      <div className="flex h-40 items-center justify-center">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  if (isError || !transactions) {
+    return (
+      <div className="rounded-xl border border-destructive p-4 text-center text-sm text-destructive">
+        Impossible de charger les transactions.
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full flex flex-col gap-3">
+    <div className="w-full">
       <div className="rounded-xl overflow-hidden border">
         <Table>
-        <TableHeader className="bg-muted/50">
-          <TableRow className="border-b">
-            <TableHead className="px-6 py-4 text-muted-foreground font-semibold border-b">Libellé</TableHead>
-            <TableHead className="px-6 py-4 text-muted-foreground font-semibold border-b">Date</TableHead>
-            <TableHead className="px-6 py-4 text-muted-foreground font-semibold border-b">Type</TableHead>
-            <TableHead className="px-6 py-4 text-muted-foreground font-semibold border-b">Montant</TableHead>
-          </TableRow>
-        </TableHeader>
+          <TableHeader className="bg-muted/50">
+            <TableRow className="border-b">
+              <TableHead className="px-6 py-4 text-muted-foreground font-semibold border-b">
+                Libellé
+              </TableHead>
+              <TableHead className="px-6 py-4 text-muted-foreground font-semibold border-b">
+                Date
+              </TableHead>
+              <TableHead className="px-6 py-4 text-muted-foreground font-semibold border-b">
+                Type
+              </TableHead>
+              <TableHead className="px-6 py-4 text-muted-foreground font-semibold border-b">
+                Montant
+              </TableHead>
+            </TableRow>
+          </TableHeader>
           <TableBody>
-            {transactions.length ? (
-              transactions.map((t, index) => (
+            {transactions.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={4}
+                  className="h-24 text-center text-muted-foreground"
+                >
+                  Aucune transaction récente.
+                </TableCell>
+              </TableRow>
+            ) : (
+              transactions.map((tx, index) => (
                 <TableRow
-                  key={t.id}
+                  key={tx.id}
                   className={`transition-all duration-200 hover:bg-accent border-b ${
                     index % 2 === 0 ? "bg-background" : "bg-muted/10"
                   }`}
                 >
-                  <TableCell className="px-6 py-4 font-medium text-foreground">{t.label}</TableCell>
-                  <TableCell className="px-6 py-4 text-sm text-muted-foreground">{t.date}</TableCell>
+                  <TableCell className="px-6 py-4 font-medium text-foreground">
+                    {tx.description ?? typeLabel[tx.type]}
+                  </TableCell>
+                  <TableCell className="px-6 py-4 text-sm text-muted-foreground">
+                    {formatDate(tx.date)}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
-                    <Badge variant={badgeVariant[t.type]} className="capitalize font-normal">
-                      {t.type}
+                    <Badge variant="secondary" className="capitalize font-normal">
+                      {typeLabel[tx.type]}
                     </Badge>
                   </TableCell>
-                  <TableCell className={`px-6 py-4 text-xs ${t.montant > 0 ? "text-green-600" : "text-red-500"}`}>
-                    {t.montant > 0 ? "+" : ""}
-                    {t.montant.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €
+                  <TableCell
+                    className={`px-6 py-4 text-xs font-medium ${
+                      isCredit(tx) ? "text-green-600" : "text-red-500"
+                    }`}
+                  >
+                    {isCredit(tx) ? "+" : "-"}
+                    {formatAmount(tx.amount)} €
                   </TableCell>
                 </TableRow>
               ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
-                  Aucune transaction récente.
-                </TableCell>
-              </TableRow>
             )}
           </TableBody>
         </Table>

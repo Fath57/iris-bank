@@ -204,4 +204,57 @@ const withdrawal = async (req: Request, res: Response) => {
   }
 };
 
-export { verify, execute, deposit, withdrawal };
+const getRecent = async (req: Request, res: Response) => {
+  try {
+    if (!req.user?.id) {
+      return res.status(401).json({ message: "Non autorisé" });
+    }
+ 
+    const userId = Number(req.user.id);
+ 
+    const rawLimit = Number(req.query.limit) || 10;
+    const limit = Math.min(rawLimit, 50);
+ 
+    const userAccountIds = await prisma.bankAccount
+      .findMany({
+        where: { userId },
+        select: { id: true },
+      })
+      .then((accounts) => accounts.map((a) => a.id));
+ 
+    if (userAccountIds.length === 0) {
+      return res.status(200).json({ status: "success", data: [] });
+    }
+ 
+    const transactions = await prisma.transaction.findMany({
+      where: {
+        accountId: { in: userAccountIds },
+      },
+      orderBy: { date: "desc" },
+      take: limit,
+      select: {
+        id: true,
+        type: true,
+        amount: true,
+        description: true,
+        date: true,
+        account: {
+          select: { type: true, iban: true },
+        },
+        beneficiary: {
+          select: { name: true, iban: true },
+        },
+      },
+    });
+ 
+    return res.status(200).json({
+      status: "success",
+      data: transactions,
+    });
+  } catch (error) {
+    console.error("Erreur lors de la récupération des transactions:", error);
+    return res.status(500).json({ message: "Erreur interne du serveur" });
+  }
+};
+
+export { verify, execute, deposit, withdrawal, getRecent };

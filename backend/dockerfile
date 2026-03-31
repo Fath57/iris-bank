@@ -1,20 +1,25 @@
-# Utiliser une image Node.js officielle (version 20 ou 22)
-FROM node:22-alpine
+# Utiliser une image Node.js officielle (Debian-based pour meilleure compatibilité)
+FROM node:22
 
-# Définir le répertoire de travail dans le conteneur
+# Définir le répertoire de travail
 WORKDIR /app
 
-# Copier les fichiers de dépendances en premier (pour optimiser le cache Docker)
-COPY package.json package-lock.json* ./
+# Copier les fichiers de dépendances
+COPY package.json ./
 
-# Installer les dépendances
-RUN npm install
+# Configurer npm pour ne pas vérifier strictement SSL (pour résoudre les problèmes de certificat)
+# et installer les dépendances
+RUN npm config set strict-ssl false && \
+    npm install --legacy-peer-deps
 
-# Copier le reste du code
+# Copier le reste du code source
 COPY . .
 
-# Exposer le port de ton app
+# Générer le client Prisma
+RUN npx prisma generate
+
+# Exposer le port de l'application
 EXPOSE 5001
 
-# La commande de démarrage sera gérée par le docker-compose
+# La commande de démarrage
 CMD ["npm", "run", "dev"]

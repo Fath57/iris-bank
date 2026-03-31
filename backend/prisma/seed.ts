@@ -9,6 +9,25 @@ console.log("DB URL:", process.env.DATABASE_URL);
 const HASHED_PASSWORD = bcrypt.hashSync("password", 10);
 
 const users: Prisma.UserCreateInput[] = [
+  // Compte administrateur
+  {
+    email: "admin@irisbank.fr",
+    password: HASHED_PASSWORD,
+    role: "ADMIN",
+    firstName: "Admin",
+    lastName: "IRIS Bank",
+    phoneNumber: "0600000000",
+    address: {
+      create: {
+        street: "1 Place de la Banque",
+        city: "Paris",
+        state: "Île-de-France",
+        zipCode: "75000",
+        country: "France"
+      }
+    }
+  },
+  // Comptes clients
   {
     email: "jean.dupont@email.fr",
     password: HASHED_PASSWORD,
@@ -261,6 +280,8 @@ const main = async () => {
   await prisma.transaction.deleteMany();
   await prisma.bankAccount.deleteMany();
   await prisma.address.deleteMany();
+  await prisma.auditLog.deleteMany();
+  await prisma.beneficiary.deleteMany();
   await prisma.user.deleteMany();
 
   console.log("Seeding database...");

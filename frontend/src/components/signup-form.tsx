@@ -13,6 +13,9 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Separator } from "./ui/separator"
+import api from "@/api/axios"
+import { toast } from "sonner"
+import useAuthStore from "@/store/authStore"
 
 export function SignupForm({
   className,
@@ -21,9 +24,14 @@ export function SignupForm({
   const navigate = useNavigate()
   const registerMutation = useRegister()
   const formRef = useRef<HTMLFormElement>(null)
+  const setUser = useAuthStore((state) => state.setUser)
 
-  const [step, setStep] = useState<1 | 2>(1)
+  const [step, setStep] = useState<1 | 2 | 3>(1)
   const [localError, setLocalError] = useState("")
+  const [userId, setUserId] = useState<number | null>(null)
+  const [verificationCode, setVerificationCode] = useState("")
+  const [isVerifying, setIsVerifying] = useState(false)
+  const [isResending, setIsResending] = useState(false)
 
   const [formData, setFormData] = useState({
     lastName: "",
@@ -81,28 +89,85 @@ export function SignupForm({
     }
 
     registerMutation.mutate(dataToSend, {
-      onSuccess: () => navigate("/dashboard"),
+      onSuccess: (data) => {
+        if (data?.data?.requiresVerification) {
+          setUserId(data.data.userId)
+          toast.success("Code de vérification envoyé à votre email")
+          setStep(3)
+        } else {
+          navigate("/dashboard")
+        }
+      },
     })
+  }
+
+  const handleVerifyCode = async () => {
+    if (verificationCode.length !== 6) {
+      toast.error("Le code doit contenir 6 chiffres")
+      return
+    }
+
+    setIsVerifying(true)
+    setLocalError("")
+
+    try {
+      const response = await api.post("/auth/verify-email", {
+        userId,
+        code: verificationCode,
+      })
+
+      if (response.data.status === "success") {
+        toast.success("Email vérifié avec succès!")
+        setUser(response.data.data.user)
+
+        const userRole = response.data.data.user.role
+        if (userRole === "ADMIN" || userRole === "SUPPORT") {
+          navigate("/admin/dashboard")
+        } else {
+          navigate("/dashboard")
+        }
+      }
+    } catch (error: any) {
+      setLocalError(error.response?.data?.error || "Code incorrect")
+      toast.error(error.response?.data?.error || "Code incorrect")
+    } finally {
+      setIsVerifying(false)
+    }
+  }
+
+  const handleResendCode = async () => {
+    setIsResending(true)
+    try {
+      await api.post("/auth/resend-code", { userId })
+      toast.success("Un nouveau code a été envoyé")
+      setVerificationCode("")
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || "Erreur lors de l'envoi du code")
+    } finally {
+      setIsResending(false)
+    }
   }
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="overflow-hidden p-0 shadow-lg">
-        <CardContent className="grid p-0 md:grid-cols-2 min-h-[600px] overflow-hidden">
+      <Card className="overflow-hidden shadow-lg">
+        <CardContent className="p-0">
           <form
             ref={formRef}
             onSubmit={handleSubmit}
-            className="flex flex-col p-6 md:p-8 min-h-0 overflow-y-auto"
+            className="flex flex-col p-6 md:p-8"
           >
             <FieldGroup className="flex flex-col flex-1">
               <div className="flex flex-col items-center gap-2 text-center mb-4">
                 <h1 className="text-2xl font-bold">
-                  {step === 1 ? "Créer un compte" : "Votre adresse"}
+                  {step === 1 && "Créer un compte"}
+                  {step === 2 && "Votre adresse"}
+                  {step === 3 && "Vérification"}
                 </h1>
                 <p className="text-sm text-balance text-muted-foreground">
-                  {step === 1
-                    ? "Renseignez vos informations personnelles"
-                    : "Où pouvons-nous vous joindre ?"}
+                  {step === 1 && "Renseignez vos informations personnelles"}
+                  {step === 2 && "Où pouvons-nous vous joindre ?"}
+                  {step === 3 && "Entrez le code reçu par email"}
                 </p>
               </div>
 
@@ -199,7 +264,7 @@ export function SignupForm({
                     Déjà un compte ?{" "}
                     <Link
                       to="/login"
-                      className="underline underline-offset-4 hover:text-primary"
+                      className="text-primary hover:underline font-medium"
                     >
                       Se connecter
                     </Link>
@@ -294,7 +359,7 @@ export function SignupForm({
                       Déjà un compte ?{" "}
                       <Link
                         to="/login"
-                        className="underline underline-offset-4 hover:text-primary"
+                        className="text-primary hover:underline font-medium"
                       >
                         Se connecter
                       </Link>
@@ -303,24 +368,82 @@ export function SignupForm({
                 </div>
               )}
 
+              {/* ── ÉTAPE 3 - VÉRIFICATION ── */}
+              {step === 3 && (
+                <div className="flex flex-col flex-1 gap-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                  <div className="text-center space-y-2">
+                    <p className="text-sm text-muted-foreground">
+                      Un code de vérification à 6 chiffres a été envoyé à :
+                    </p>
+                    <p className="font-semibold">{formData.email}</p>
+                  </div>
+
+                  <Field>
+                    <FieldLabel htmlFor="verificationCode">Code de vérification</FieldLabel>
+                    <Input
+                      id="verificationCode"
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      maxLength={6}
+                      placeholder="000000"
+                      className="text-center text-2xl tracking-widest"
+                      value={verificationCode}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/[^0-9]/g, "")
+                        setVerificationCode(value)
+                        if (localError) setLocalError("")
+                      }}
+                      onKeyPress={(e) => {
+                        if (e.key === "Enter" && verificationCode.length === 6) {
+                          handleVerifyCode()
+                        }
+                      }}
+                    />
+                    <FieldDescription>
+                      Le code expire dans 15 minutes
+                    </FieldDescription>
+                  </Field>
+
+                  <div className="flex-1" />
+
+                  <Button
+                    type="button"
+                    className="w-full"
+                    size={"lg"}
+                    onClick={handleVerifyCode}
+                    disabled={verificationCode.length !== 6 || isVerifying}
+                  >
+                    {isVerifying ? "Vérification..." : "Vérifier"}
+                  </Button>
+
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="w-full"
+                    size={"lg"}
+                    onClick={handleResendCode}
+                    disabled={isResending}
+                  >
+                    {isResending ? "Envoi..." : "Renvoyer le code"}
+                  </Button>
+                </div>
+              )}
+
             </FieldGroup>
           </form>
-
-          {/* IMAGE */}
-          <div className="relative hidden bg-muted md:block" />
-
         </CardContent>
       </Card>
 
       <FieldDescription className="px-6 text-center">
         En cliquant sur continuer, vous acceptez nos{" "}
-        <a href="#" className="underline hover:text-primary">
+        <a href="#" className="text-primary hover:underline font-medium">
           Conditions d'utilisation
         </a>{" "}
         et notre{" "}
-        <a href="#" className="underline hover:text-primary">
+        <Link to="/privacy-policy" className="text-primary hover:underline font-medium">
           Politique de confidentialité
-        </a>
+        </Link>
         .
       </FieldDescription>
     </div>

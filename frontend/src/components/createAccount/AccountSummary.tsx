@@ -8,12 +8,16 @@ const ACCOUNT_TYPE_LABELS: Record<AccountType, string> = {
   CHECKING: 'Courant',
   SAVINGS: 'Épargne',
   BUSINESS: 'Professionnel',
+  LIVRET_A: 'Livret A',
+  PEL: 'PEL',
 };
 
 const ACCOUNT_FEATURES: Record<AccountType, string[]> = {
   CHECKING: ['Carte bancaire incluse', 'Virements SEPA illimités', 'Accès espace client'],
   SAVINGS: ['Taux d\'intérêt compétitif', 'Pas de frais de tenue', 'Accès espace client'],
   BUSINESS: ['Carte bancaire pro incluse', 'Virements SEPA illimités', 'Relevés comptables'],
+  LIVRET_A: ['Taux réglementé 3%', 'Exonération fiscale', 'Plafond 22 950€'],
+  PEL: ['Taux d\'intérêt garanti', 'Prime d\'État possible', 'Épargne logement'],
 };
 
 interface Props {

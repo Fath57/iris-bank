@@ -14,7 +14,7 @@ services:
       - networkName
 
   backend:
-    build: 
+    build:
       context: ./backend
     container_name: bank-backend
     ports:
@@ -24,15 +24,23 @@ services:
       - /app/node_modules
     environment:
       - DATABASE_URL=postgresql://postgres:123@dev-db:5432/bank-platform?schema=public
+      - JWT_SECRET=your-super-secret-jwt-key-change-this-in-production-12345678
+      - JWT_EXPIRES_IN=7d
+      - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=true
       - CHOKIDAR_INTERVAL=1000
+      - MAILTRAP_HOST=sandbox.smtp.mailtrap.io
+      - MAILTRAP_PORT=2525
+      - MAILTRAP_USER=3c5250417e2bd0
+      - MAILTRAP_PASS=6983393eb4d270
     depends_on:
       - dev-db
     networks:
       - networkName
     command: >
-      sh -c "npx prisma generate 
-      && npx prisma migrate deploy 
+      sh -c "npm rebuild esbuild
+      && npx prisma generate
+      && npx prisma migrate deploy
       && npm run dev"
 
   frontend:
@@ -48,6 +56,9 @@ services:
       - backend
     networks:
       - networkName
+    command: >
+      sh -c "npm rebuild rollup vite esbuild
+      && npm run dev"
 
 networks:
   networkName:

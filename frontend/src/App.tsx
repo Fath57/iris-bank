@@ -6,6 +6,7 @@ import SignupPage from "./pages/SignupPage"
 import DashboardLayout from "./components/layouts/dashboard-layout"
 import DashboardPage from "./pages/DashboardHomePage"
 import ProtectedRoute from "./components/ProtectedRoute"
+import ProtectedAdminRoute from "./components/ProtectedAdminRoute"
 import AuthInitializer from "./components/AuthInitializer"
 import MyAccountsPage from "./pages/MyAccountsPage"
 import NewTransactionPage from "./pages/NewTransactionPage"
@@ -13,6 +14,14 @@ import DepositWithdrawalPage from "./pages/DepositWithdrawalPage"
 import AccountDetailPage from "./pages/AccountDetailPage"
 import CreateAccountPage from "./pages/CreateAccountPage"
 import TransactionsPage from "./pages/TransactionsPage"
+import AdminLayout from "./components/layouts/admin-layout"
+import AdminDashboardPage from "./pages/admin/AdminDashboardPage"
+import AdminClientsPage from "./pages/admin/AdminClientsPage"
+import AdminClientDetailPage from "./pages/admin/AdminClientDetailPage"
+import AdminAccountsPage from "./pages/admin/AdminAccountsPage"
+import AdminAccountTransactionsPage from "./pages/admin/AdminAccountTransactionsPage"
+import SettingsPage from "./pages/SettingsPage"
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage"
 
 const queryClient = new QueryClient();
 
@@ -28,6 +37,10 @@ const router = createBrowserRouter([
   {
     path: "/signup",
     element: <SignupPage />,
+  },
+  {
+    path: "/privacy-policy",
+    element: <PrivacyPolicyPage />,
   },
   {
     element: <ProtectedRoute />, 
@@ -81,6 +94,29 @@ const router = createBrowserRouter([
         element: <DashboardLayout />,
         children: [
           { index: true, element: <DepositWithdrawalPage /> },
+        ]
+      },
+      {
+        path: "/settings",
+        element: <DashboardLayout />,
+        children: [
+          { index: true, element: <SettingsPage /> },
+        ]
+      }
+    ]
+  },
+  {
+    element: <ProtectedAdminRoute />,
+    children: [
+      {
+        path: "/admin",
+        element: <AdminLayout />,
+        children: [
+          { path: "dashboard", element: <AdminDashboardPage /> },
+          { path: "clients", element: <AdminClientsPage /> },
+          { path: "clients/:id", element: <AdminClientDetailPage /> },
+          { path: "accounts", element: <AdminAccountsPage /> },
+          { path: "accounts/:id/transactions", element: <AdminAccountTransactionsPage /> },
         ]
       }
     ]

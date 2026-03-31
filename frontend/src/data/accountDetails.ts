@@ -1,4 +1,4 @@
-export type AccountType = "CHECKING" | "SAVINGS" | "BUSINESS";
+export type AccountType = "CHECKING" | "SAVINGS" | "BUSINESS" | "LIVRET_A" | "PEL";
 export type AccountStatus = "ACTIVE" | "BLOCKED" | "CLOSED";
 export type TransactionType = "DEPOSIT" | "WITHDRAWAL" | "TRANSFER" | "PAYMENT";
 
@@ -117,6 +117,8 @@ export const accountTypeLabels: Record<AccountType, string> = {
   CHECKING: "Compte courant",
   SAVINGS: "Compte épargne",
   BUSINESS: "Compte professionnel",
+  LIVRET_A: "Livret A",
+  PEL: "PEL (Plan Épargne Logement)",
 };
 
 export const transactionTypeLabels: Record<TransactionType, string> = {

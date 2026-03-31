@@ -1,4 +1,4 @@
-export type AccountType = 'CHECKING' | 'SAVINGS' | 'BUSINESS';
+export type AccountType = 'CHECKING' | 'SAVINGS' | 'BUSINESS' | 'LIVRET_A' | 'PEL';
  
 export interface CreateAccountPayload {
   type: AccountType;

@@ -1,4 +1,4 @@
-import { CreditCard, PiggyBank, Briefcase } from 'lucide-react';
+import { CreditCard, PiggyBank, Briefcase, Wallet, Home } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { AccountType } from '@/types/CreateAccount';
 
@@ -30,6 +30,20 @@ const ACCOUNT_TYPES: {
     icon: <Briefcase size={16} className="text-amber-700" />,
     iconBg: 'bg-amber-100',
   },
+  {
+    value: 'LIVRET_A',
+    label: 'Livret A',
+    description: 'Épargne défiscalisée',
+    icon: <Wallet size={16} className="text-purple-700" />,
+    iconBg: 'bg-purple-100',
+  },
+  {
+    value: 'PEL',
+    label: 'PEL',
+    description: 'Plan Épargne Logement',
+    icon: <Home size={16} className="text-indigo-700" />,
+    iconBg: 'bg-indigo-100',
+  },
 ];
 
 interface Props {
@@ -39,7 +53,7 @@ interface Props {
 
 export function AccountTypeSelector({ value, onChange }: Props) {
   return (
-    <div className="grid grid-cols-3 gap-3">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
       {ACCOUNT_TYPES.map((type) => (
         <button
           key={type.value}

@@ -22,6 +22,8 @@ const accountTypeLabel: Record<BankAccount["type"], string> = {
   CHECKING: "Compte courant",
   SAVINGS: "Livret épargne",
   BUSINESS: "Compte professionnel",
+  LIVRET_A: "Livret A",
+  PEL: "PEL",
 };
 
 export default function AccountHeader({

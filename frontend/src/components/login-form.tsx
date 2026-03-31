@@ -34,14 +34,19 @@ export function LoginForm({
   // 3. Fonction de soumission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     // On lance la mutation React-Query
     loginMutation.mutate(
       { email, password },
       {
-        onSuccess: () => {
-          // Redirection vers le dashboard si la connexion réussit
-          navigate("/dashboard")
+        onSuccess: (data) => {
+          // Redirection selon le rôle de l'utilisateur
+          const userRole = data?.data?.user?.role
+          if (userRole === "ADMIN" || userRole === "SUPPORT") {
+            navigate("/admin/dashboard")
+          } else {
+            navigate("/dashboard")
+          }
         },
       }
     )
@@ -84,7 +89,7 @@ export function LoginForm({
               <Field>
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Mot de passe</FieldLabel>
-                  <a href="#" className="ml-auto text-sm underline-offset-4 hover:underline">
+                  <a href="#" className="ml-auto text-sm text-primary hover:underline">
                     Mot de passe oublié?
                   </a>
                 </div>
@@ -108,9 +113,9 @@ export function LoginForm({
                 </Button>
                 <FieldDescription className="text-center">
                   Pas encore de compte ?{" "}
-                  <Link 
-                    to="/signup" 
-                    className="underline underline-offset-4 hover:text-primary transition-colors"
+                  <Link
+                    to="/signup"
+                    className="text-primary hover:underline font-medium"
                   >
                     Créer un compte
                   </Link>
@@ -121,7 +126,15 @@ export function LoginForm({
         </CardContent>
       </Card>
       <FieldDescription className="px-6 text-center">
-        En cliquant sur se connecter, vous acceptez nos <a href="#">Conditions d'utilisation</a>.
+        En cliquant sur se connecter, vous acceptez nos{" "}
+        <a href="#" className="text-primary hover:underline font-medium">
+          Conditions d'utilisation
+        </a>{" "}
+        et notre{" "}
+        <Link to="/privacy-policy" className="text-primary hover:underline font-medium">
+          Politique de confidentialité
+        </Link>
+        .
       </FieldDescription>
     </div>
   )

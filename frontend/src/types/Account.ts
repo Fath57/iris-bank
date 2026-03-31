@@ -1,4 +1,4 @@
-export type AccountType = "courant" | "epargne" | "joint";
+export type AccountType = "CHECKING" | "SAVINGS" | "BUSINESS" | "LIVRET_A" | "PEL";
 
 export interface Transaction {
   id: string;

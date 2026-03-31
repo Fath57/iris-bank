@@ -18,6 +18,8 @@ enum AccountType {
   CHECKING
   SAVINGS
   BUSINESS
+  LIVRET_A
+  PEL
 }
 
 enum AccountStatus {
@@ -40,21 +42,24 @@ enum NotificationType {
 }
 
 model User {
-  id            Int            @id @default(autoincrement())
-  email         String         @unique
-  password      String
-  role          Role           @default(USER)
-  lastName      String
-  firstName     String
-  phoneNumber   String
-  address       Address?
-  accounts      BankAccount[]
-  beneficiaries Beneficiary[]
-  notifications Notification[]
-  auditLogs     AuditLog[]
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  deletedAt     DateTime?
+  id                   Int            @id @default(autoincrement())
+  email                String         @unique
+  password             String
+  role                 Role           @default(USER)
+  lastName             String
+  firstName            String
+  phoneNumber          String
+  address              Address?
+  accounts             BankAccount[]
+  beneficiaries        Beneficiary[]
+  notifications        Notification[]
+  auditLogs            AuditLog[]
+  emailVerified        Boolean        @default(false)
+  verificationCode     String?
+  verificationCodeExp  DateTime?
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  deletedAt            DateTime?
 }
 
 model Address {

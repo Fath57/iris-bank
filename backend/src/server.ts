@@ -10,6 +10,7 @@ import authRoutes from './routes/auth.routes.js';
 import bankAccountRoutes from './routes/bankAccount.routes.js';
 import transactionRoutes from './routes/transaction.routes.js';
 import beneficiaryRoutes from './routes/Beneficiary.routes.js';
+import adminRoutes from './routes/admin.routes.js';
 
 config();
 connectDb();
@@ -33,6 +34,7 @@ app.use('/auth', authRoutes);
 app.use('/accounts', bankAccountRoutes);
 app.use('/transactions', transactionRoutes);
 app.use('/beneficiaries', beneficiaryRoutes);
+app.use('/admin', adminRoutes);
 
 
 const PORT = process.env.PORT || 5001;

@@ -11,6 +11,8 @@ const ACCOUNT_DETAILS = {
   CHECKING: { name: "Compte Courant", subtype: "Compte principal", label: "Courant", className: "bg-blue-50 text-blue-700 border-blue-200" },
   SAVINGS: { name: "Livret d'Épargne", subtype: "Épargne", label: "Épargne", className: "bg-emerald-50 text-emerald-700 border-emerald-200" },
   BUSINESS: { name: "Compte Pro", subtype: "Entreprise", label: "Pro", className: "bg-violet-50 text-violet-700 border-violet-200" },
+  LIVRET_A: { name: "Livret A", subtype: "Épargne réglementée", label: "Livret A", className: "bg-purple-50 text-purple-700 border-purple-200" },
+  PEL: { name: "PEL", subtype: "Plan Épargne Logement", label: "PEL", className: "bg-indigo-50 text-indigo-700 border-indigo-200" },
 };
 
 const formatDate = (dateString: string) => {
@@ -27,7 +29,7 @@ export function AccountCard({ account }: { account: any }) {
 
   return (
     <Card
-      onClick={() => navigate(`/comptes/${account.id}`)}
+      onClick={() => navigate(`/accounts/${account.id}`)}
       className={cn(
         "cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 border flex flex-col",
         isOverdraft ? "border-red-200 bg-red-50/20" : "border-border hover:border-border/80"

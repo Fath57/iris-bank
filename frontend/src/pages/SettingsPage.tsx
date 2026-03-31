@@ -19,6 +19,7 @@ import { Switch } from "@/components/ui/switch";
 import { User, Mail, Phone, MapPin, Shield } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { TwoFAModal } from "@/components/TwoFAModal";
 
 interface UserProfile {
   firstName: string;
@@ -44,6 +45,7 @@ const roleLabels: Record<string, { label: string; className: string }> = {
 export default function SettingsPage() {
   const queryClient = useQueryClient();
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
+  const [twoFAModalOpen, setTwoFAModalOpen] = useState(false);
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: "",
@@ -83,19 +85,6 @@ export default function SettingsPage() {
     },
   });
 
-  const toggle2FAMutation = useMutation({
-    mutationFn: async (enabled: boolean) => {
-      const response = await api.post("/users/toggle-2fa", { enabled });
-      return response.data;
-    },
-    onSuccess: (data) => {
-      toast.success(data.message);
-    },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Erreur lors de la modification");
-    },
-  });
-
   const handlePasswordChange = () => {
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
       toast.error("Les mots de passe ne correspondent pas");
@@ -113,9 +102,8 @@ export default function SettingsPage() {
     });
   };
 
-  const handle2FAToggle = (checked: boolean) => {
-    setTwoFactorEnabled(checked);
-    toggle2FAMutation.mutate(checked);
+  const handle2FAToggle = (_checked: boolean) => {
+    setTwoFAModalOpen(true);
   };
 
   if (isLoading) {
@@ -284,7 +272,6 @@ export default function SettingsPage() {
               <Switch
                 checked={twoFactorEnabled}
                 onCheckedChange={handle2FAToggle}
-                disabled={toggle2FAMutation.isPending}
               />
             </div>
           </div>
@@ -365,6 +352,15 @@ export default function SettingsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* 2FA TOTP Modal */}
+      {twoFAModalOpen && (
+        <TwoFAModal
+          isEnabled={twoFactorEnabled}
+          onClose={() => setTwoFAModalOpen(false)}
+          onSuccess={() => setTwoFactorEnabled(!twoFactorEnabled)}
+        />
+      )}
     </div>
   );
 }

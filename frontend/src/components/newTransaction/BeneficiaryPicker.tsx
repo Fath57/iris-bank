@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { AddBeneficiaryModal, type NewBeneficiary } from "./AddBeneficiaryModal";
 import { useBeneficiaries, useAddBeneficiary } from "@/hooks/useBeneficiaries";
+import { toast } from "sonner";
 
 interface BeneficiaryPickerProps {
   selectedIban: string;
@@ -37,7 +38,7 @@ export function BeneficiaryPicker({ selectedIban, onSelect }: BeneficiaryPickerP
           setShowModal(false);
         },
         onError: () => {
-          // TODO: toast d'erreur
+          toast.error("Erreur lors de l'ajout du bénéficiaire");
         },
       }
     );

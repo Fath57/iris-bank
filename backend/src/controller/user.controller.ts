@@ -11,8 +11,8 @@ const getUserProfile = async (req: Request, res: Response) => {
     const userId = Number(req.user.id);
 
     const userProfile = await prisma.user.findUnique({
-      where: { 
-        id: userId 
+      where: {
+        id: userId
       },
       select: {
         firstName: true,
@@ -20,6 +20,7 @@ const getUserProfile = async (req: Request, res: Response) => {
         email: true,
         phoneNumber: true,
         role: true,
+        twoFactorEnabled: true,
         address: {
           select: {
             street: true,
@@ -122,8 +123,7 @@ const toggle2FA = async (req: Request, res: Response) => {
     await prisma.user.update({
       where: { id: userId },
       data: {
-        // We'll store this in a future field
-        // For now, just acknowledge the request
+        twoFactorEnabled: enabled,
       }
     });
 

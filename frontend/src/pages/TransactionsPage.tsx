@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { useAccounts, useAccountById } from "@/hooks/useAccounts";
 import AccountHeader from "@/components/transactions/AccountHeader";
@@ -6,6 +7,7 @@ import TransactionFilters, { type Filters } from "@/components/transactions/Tran
 import TransactionsTable from "@/components/transactions/TransactionTable";
 
 export default function TransactionsPage() {
+  const navigate = useNavigate();
   const [selectedAccountId, setSelectedAccountId] = useState<number | null>(null);
   const [filters, setFilters] = useState<Filters>({
     search: "",
@@ -32,7 +34,7 @@ export default function TransactionsPage() {
   };
 
   const handleNewTransfer = () => {
-    // TODO: ouvrir la modale / naviguer vers la page virement
+    navigate("/transactions/new");
   };
 
   const filtered = useMemo(() => {

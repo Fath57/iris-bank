@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { User, Mail, Phone, MapPin, Shield } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
 interface UserProfile {
@@ -26,6 +26,7 @@ interface UserProfile {
   email: string;
   phoneNumber: string;
   role: string;
+  twoFactorEnabled: boolean;
   address: {
     street: string;
     city: string;
@@ -60,6 +61,12 @@ export default function SettingsPage() {
       return response.data.data.user;
     },
   });
+
+  useEffect(() => {
+    if (data) {
+      setTwoFactorEnabled(data.twoFactorEnabled ?? false);
+    }
+  }, [data]);
 
   const changePasswordMutation = useMutation({
     mutationFn: async (data: { currentPassword: string; newPassword: string }) => {

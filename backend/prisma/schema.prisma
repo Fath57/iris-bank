@@ -57,6 +57,7 @@ model User {
   emailVerified        Boolean        @default(false)
   verificationCode     String?
   verificationCodeExp  DateTime?
+  twoFactorEnabled     Boolean        @default(false)
   createdAt            DateTime       @default(now())
   updatedAt            DateTime       @updatedAt
   deletedAt            DateTime?

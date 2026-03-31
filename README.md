@@ -1,6 +1,6 @@
 # 🏦 IRIS Bank - Plateforme Bancaire Moderne
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Node](https://img.shields.io/badge/node-22.x-green.svg)
 ![PostgreSQL](https://img.shields.io/badge/postgresql-17.6-blue.svg)
@@ -24,23 +24,35 @@ IRIS Bank est une plateforme bancaire moderne full-stack développée avec les d
 ## ✨ Fonctionnalités
 
 ### 🔐 Authentification & Sécurité
-- ✅ Inscription avec informations complètes (nom, email, téléphone, adresse)
+- ✅ Inscription multi-étapes (3 étapes)
+  - Étape 1 : Informations personnelles
+  - Étape 2 : Adresse complète
+  - Étape 3 : Vérification email (code 6 chiffres)
+- ✅ Vérification email avec Mailtrap
+- ✅ Code de vérification avec expiration (15 min)
+- ✅ Renvoi de code possible
 - ✅ Connexion sécurisée avec JWT (cookies httpOnly)
 - ✅ Session persistante (7 jours)
-- ✅ Déconnexion avec suppression du token
 - ✅ Mots de passe hashés avec bcrypt
+- ✅ Changement de mot de passe sécurisé
+- ✅ Authentification 2FA (préparé)
 - ✅ Protection des routes (authentification requise)
+- ✅ Redirection automatique selon le rôle (USER/ADMIN)
 
 ### 💳 Gestion des Comptes Bancaires
-- ✅ Création de comptes multiples
+- ✅ Création de comptes multiples (5 types)
   - Compte courant (CHECKING)
   - Compte épargne (SAVINGS)
   - Compte professionnel (BUSINESS)
+  - Livret A (LIVRET_A) - Taux 3%, plafond 22 950€
+  - PEL (PEL) - Plan Épargne Logement
 - ✅ IBAN auto-généré (format FR76)
 - ✅ Bonus de bienvenue de 100€ à la création
-- ✅ Visualisation de tous les comptes
+- ✅ Visualisation de tous les comptes avec détails
 - ✅ Détails de compte avec historique complet
 - ✅ Statut de compte (ACTIF, BLOQUÉ, FERMÉ)
+- ✅ Badges visuels par type de compte
+- ✅ Affichage des caractéristiques par type
 
 ### 💰 Opérations Bancaires
 
@@ -57,30 +69,78 @@ IRIS Bank est une plateforme bancaire moderne full-stack développée avec les d
 - ✅ Retrait avec vérification de solde
 - ✅ Mise à jour instantanée du solde
 - ✅ Historique détaillé
+- ✅ Sélection visuelle du compte
 
 ### 📊 Tableau de Bord
 - ✅ Vue d'ensemble des finances
 - ✅ Solde total tous comptes confondus
-- ✅ Répartition par type de compte (Courant, Épargne, Pro)
-- ✅ Dernières transactions (10 récentes)
+- ✅ Répartition par type de compte
+- ✅ Dernières transactions avec indicateurs visuels
 - ✅ Statistiques de compte
 - ✅ Navigation rapide vers les comptes
+- ✅ Cartes de compte interactives
 
 ### 📈 Historique & Suivi
 - ✅ Historique complet des transactions
-- ✅ Filtrage par compte
+- ✅ Filtrage par compte avec sélecteur
 - ✅ Détails de chaque transaction
   - Type (Dépôt, Retrait, Virement, Paiement)
-  - Montant
+  - Montant avec formatage français
   - Description
   - Date et heure
   - Bénéficiaire (pour virements)
+- ✅ Indicateurs visuels (TrendingUp/Down)
+- ✅ Affichage des détails de compte
 
 ### 👥 Gestion des Bénéficiaires
 - ✅ Sauvegarde automatique lors des virements
 - ✅ Liste des bénéficiaires enregistrés
 - ✅ Ajout manuel de bénéficiaires
 - ✅ Réutilisation pour virements futurs
+
+### 👤 Espace Utilisateur
+- ✅ Page Paramètres complète
+  - Informations personnelles
+  - Coordonnées (email, téléphone)
+  - Adresse complète
+  - Informations du compte (rôle, statut)
+- ✅ Section Sécurité
+  - Changement de mot de passe avec validation
+  - Toggle 2FA
+  - Toasts de confirmation
+- ✅ Profil utilisateur détaillé
+
+### 👨‍💼 Panneau d'Administration
+- ✅ Dashboard admin avec statistiques
+- ✅ Gestion des clients
+  - Liste complète des clients
+  - Détails client avec comptes
+  - Modification des informations client
+  - Recherche et filtrage
+- ✅ Gestion des comptes
+  - Liste de tous les comptes bancaires
+  - Filtrage par type et statut
+  - Historique des transactions par compte
+  - Blocage/Déblocage de comptes avec raison
+- ✅ Protection des routes admin (ADMIN/SUPPORT uniquement)
+
+### 🎨 Design & UI/UX
+- ✅ Landing page moderne avec sections
+  - Hero section avec CTAs
+  - Features (6 cartes)
+  - Témoignages clients
+  - Footer complet
+- ✅ Pages d'authentification avec illustrations SVG
+  - Design split-screen (43%/57%)
+  - Illustrations personnalisées (carte bancaire, mobile)
+  - Fond avec gradient primary
+  - Responsive mobile
+- ✅ Politique de confidentialité complète
+- ✅ Utilisation cohérente des couleurs `--primary`
+- ✅ Composants Shadcn/ui personnalisés
+- ✅ Animations et transitions fluides
+- ✅ Toasts de notification (Sonner)
+- ✅ Dark mode supporté
 
 ## 🚀 Stack Technique
 
@@ -90,10 +150,11 @@ IRIS Bank est une plateforme bancaire moderne full-stack développée avec les d
 | **Node.js** | 22.x | Runtime JavaScript |
 | **TypeScript** | 5.9.3 | Typage statique |
 | **Express.js** | 5.2.1 | Framework web |
-| **Prisma** | 6.16.2 | ORM pour PostgreSQL |
+| **Prisma** | 6.19.2 | ORM pour PostgreSQL |
 | **PostgreSQL** | 17.6 | Base de données |
 | **JWT** | 9.0.3 | Authentification |
 | **Bcrypt** | 3.0.3 | Hashage des mots de passe |
+| **Nodemailer** | 6.9.x | Envoi d'emails |
 | **Zod** | 3.23.8 | Validation des données |
 | **CORS** | 2.8.6 | Gestion des requêtes cross-origin |
 
@@ -135,69 +196,36 @@ git clone https://github.com/votre-username/iris-bank.git
 cd iris-bank
 ```
 
-2. **Démarrer les services Docker**
+2. **Configurer les variables d'environnement**
+```bash
+# Copier l'exemple
+cp backend/.env.example backend/.env
+
+# Modifier avec vos propres valeurs
+nano backend/.env
+```
+
+3. **Démarrer les services Docker**
 ```bash
 docker-compose up -d
 ```
 
-3. **Attendre que les services démarrent** (~30 secondes)
+4. **Attendre que les services démarrent** (~30 secondes)
 ```bash
 docker-compose logs -f
 ```
 
-4. **Seeder la base de données**
+5. **Appliquer les migrations et seeder la base**
 ```bash
+docker-compose exec backend npx prisma migrate deploy
 docker-compose exec backend npm run seed
 ```
 
-5. **Accéder à l'application**
+6. **Accéder à l'application**
 - Frontend : http://localhost:5173
 - Backend API : http://localhost:5001
 - Base de données : localhost:5435
-
-### Sans Docker (Développement Local)
-
-#### Backend
-
-```bash
-cd backend
-
-# Installer les dépendances
-npm install
-
-# Créer le fichier .env
-cat > .env << EOF
-DATABASE_URL=postgresql://postgres:123@localhost:5435/bank-platform?schema=public
-JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
-JWT_EXPIRES_IN=7d
-NODE_ENV=development
-PORT=5001
-EOF
-
-# Générer le client Prisma
-npx prisma generate
-
-# Lancer les migrations
-npx prisma migrate deploy
-
-# Seeder la base de données
-npm run seed
-
-# Démarrer le serveur
-npm run dev
-```
-
-#### Frontend
-
-```bash
-cd frontend
-
-# Installer les dépendances
-npm install
-
-# Démarrer le serveur de développement
-npm run dev
-```
+- Prisma Studio : http://localhost:5555
 
 ## ⚙️ Configuration
 
@@ -210,18 +238,12 @@ JWT_SECRET=your-super-secret-jwt-key-change-this-in-production-12345678
 JWT_EXPIRES_IN=7d
 NODE_ENV=development
 PORT=5001
-```
 
-#### Frontend (Vite Proxy)
-Le proxy Vite est configuré dans `frontend/vite.config.ts` :
-```typescript
-proxy: {
-  '/api': {
-    target: 'http://backend:5001',
-    changeOrigin: true,
-    rewrite: (path) => path.replace(/^\/api/, ''),
-  },
-}
+# Mailtrap SMTP Configuration
+MAILTRAP_HOST=sandbox.smtp.mailtrap.io
+MAILTRAP_PORT=2525
+MAILTRAP_USER=your_mailtrap_user
+MAILTRAP_PASS=your_mailtrap_password
 ```
 
 ### Ports
@@ -238,15 +260,17 @@ proxy: {
 ### Première Connexion
 
 1. Accéder à http://localhost:5173
-2. Cliquer sur "Se connecter"
-3. Utiliser un compte de test (voir section ci-dessous)
+2. Cliquer sur "Créer un compte" ou "Ouvrir un compte"
+3. Remplir le formulaire en 3 étapes
+4. Vérifier votre email (code à 6 chiffres)
+5. Vous serez redirigé vers le dashboard
 
 ### Créer un Compte Bancaire
 
 1. Accéder au Dashboard
-2. Cliquer sur "Mes Comptes" dans le menu
-3. Cliquer sur "Créer un nouveau compte"
-4. Sélectionner le type de compte
+2. Menu > "Créer un compte"
+3. Sélectionner le type de compte (Courant, Épargne, Pro, Livret A, PEL)
+4. Voir le résumé avec les caractéristiques
 5. Valider - vous recevrez 100€ de bonus !
 
 ### Effectuer un Virement
@@ -259,15 +283,6 @@ proxy: {
 6. Vérifier les détails
 7. Confirmer l'opération
 
-### Effectuer un Dépôt/Retrait
-
-1. Menu > "Dépôt/Retrait"
-2. Choisir l'opération (Dépôt ou Retrait)
-3. Sélectionner le compte
-4. Entrer le montant
-5. Ajouter une description
-6. Valider
-
 ## 🔑 Comptes de Test
 
 Tous les comptes utilisent le mot de passe : **`password`**
@@ -277,14 +292,14 @@ Tous les comptes utilisent le mot de passe : **`password`**
 | jean.dupont@email.fr | Jean Dupont | Paris | 2 (Courant + Épargne) | 16 450,50 € |
 | marie.martin@email.fr | Marie Martin | Lyon | 2 (Courant + Business) | 6 290,20 € |
 | luc.bernard@email.fr | Luc Bernard | Toulouse | 1 (Courant) | 210,50 € |
-| sophie.petit@email.fr | Sophie Petit | Bordeaux | 1 (Courant) | 3 200,00 € |
-| thomas.robert@email.fr | Thomas Robert | Marseille | 1 (Courant) | 50,10 € |
+| admin@irisbank.fr | Admin IRIS | Paris | - | - |
 
 ### Comptes Recommandés pour Tests
 
 - **Jean Dupont** : Compte riche avec historique complet
 - **Thomas Robert** : Compte avec faible solde (tester limites)
 - **Marie Martin** : Compte professionnel
+- **admin@irisbank.fr** : Accès panneau d'administration
 
 ## 📁 Structure du Projet
 
@@ -292,35 +307,58 @@ Tous les comptes utilisent le mot de passe : **`password`**
 iris-bank/
 ├── backend/                    # API Express.js
 │   ├── prisma/
-│   │   ├── schema.prisma      # Modèles de données
+│   │   ├── schema.prisma      # Modèles de données (5 types de comptes)
 │   │   ├── migrations/        # Migrations SQL
 │   │   └── seed.ts            # Données de test
 │   ├── src/
 │   │   ├── config/            # Configuration (DB, etc.)
 │   │   ├── controller/        # Logique métier
+│   │   │   ├── auth.controller.ts    # Register, login, verify email
+│   │   │   ├── user.controller.ts    # Profile, change password, 2FA
+│   │   │   ├── bankAccount.controller.ts
+│   │   │   ├── admin.controller.ts   # Gestion clients/comptes
+│   │   │   └── ...
 │   │   ├── middleware/        # Auth, validation
 │   │   ├── routes/            # Endpoints API
+│   │   ├── services/          # Email service (Nodemailer)
 │   │   ├── utils/             # Utilitaires (JWT, etc.)
-│   │   ├── validators/        # Schémas Zod
+│   │   ├── validators/        # Schémas Zod (5 types de comptes)
 │   │   └── server.ts          # Point d'entrée
-│   ├── dockerfile             # Image Docker backend
+│   ├── dockerfile
 │   └── package.json
 │
 ├── frontend/                   # Application React
 │   ├── src/
 │   │   ├── api/               # Configuration Axios
 │   │   ├── components/        # Composants React
-│   │   │   ├── ui/            # Composants Shadcn/ui
-│   │   │   ├── layouts/       # Layout principal
+│   │   │   ├── ui/            # Shadcn/ui (dialog, switch, etc.)
+│   │   │   ├── layouts/       # Dashboard & Admin layouts
+│   │   │   ├── signup-form.tsx      # Formulaire 3 étapes
+│   │   │   ├── login-form.tsx
 │   │   │   └── [features]/    # Composants par feature
-│   │   ├── hooks/             # Custom hooks (React Query)
-│   │   ├── pages/             # Pages de l'application
+│   │   ├── hooks/             # React Query hooks
+│   │   │   ├── useAuth.ts
+│   │   │   ├── useAdmin.ts
+│   │   │   └── ...
+│   │   ├── pages/             # Pages
+│   │   │   ├── HomePage.tsx         # Landing page
+│   │   │   ├── SignupPage.tsx       # Inscription avec SVG
+│   │   │   ├── LoginPage.tsx        # Connexion avec SVG
+│   │   │   ├── SettingsPage.tsx     # Paramètres utilisateur
+│   │   │   ├── PrivacyPolicyPage.tsx
+│   │   │   ├── admin/               # Pages admin
+│   │   │   │   ├── AdminDashboardPage.tsx
+│   │   │   │   ├── AdminClientsPage.tsx
+│   │   │   │   ├── AdminClientDetailPage.tsx
+│   │   │   │   ├── AdminAccountsPage.tsx
+│   │   │   │   └── AdminAccountTransactionsPage.tsx
+│   │   │   └── ...
 │   │   ├── store/             # État global (Zustand)
 │   │   ├── types/             # Types TypeScript
-│   │   ├── App.tsx            # Composant racine
+│   │   ├── App.tsx            # Routes
 │   │   └── main.tsx           # Point d'entrée
-│   ├── dockerfile             # Image Docker frontend
-│   ├── vite.config.ts         # Configuration Vite
+│   ├── dockerfile
+│   ├── vite.config.ts
 │   └── package.json
 │
 ├── docker-compose.yml          # Orchestration services
@@ -334,16 +372,26 @@ iris-bank/
 
 | Méthode | Endpoint | Description | Auth |
 |---------|----------|-------------|------|
-| POST | `/auth/register` | Inscription | ❌ |
+| POST | `/auth/register` | Inscription (3 étapes) | ❌ |
+| POST | `/auth/verify-email` | Vérifier email (code 6 chiffres) | ❌ |
+| POST | `/auth/resend-code` | Renvoyer code de vérification | ❌ |
 | POST | `/auth/login` | Connexion | ❌ |
 | POST | `/auth/logout` | Déconnexion | ✅ |
 | GET | `/auth/me` | Utilisateur actuel | ✅ |
+
+### Utilisateurs
+
+| Méthode | Endpoint | Description | Auth |
+|---------|----------|-------------|------|
+| GET | `/users/profile` | Profil utilisateur | ✅ |
+| PUT | `/users/change-password` | Changer mot de passe | ✅ |
+| POST | `/users/toggle-2fa` | Activer/Désactiver 2FA | ✅ |
 
 ### Comptes Bancaires
 
 | Méthode | Endpoint | Description | Auth |
 |---------|----------|-------------|------|
-| POST | `/accounts/create` | Créer un compte | ✅ |
+| POST | `/accounts/create` | Créer un compte (5 types) | ✅ |
 | GET | `/accounts/getByUser` | Tous les comptes de l'utilisateur | ✅ |
 | GET | `/accounts/stats` | Statistiques des comptes | ✅ |
 | GET | `/accounts/:id` | Détails d'un compte | ✅ |
@@ -358,12 +406,18 @@ iris-bank/
 | POST | `/transactions/withdrawal` | Retrait d'argent | ✅ |
 | GET | `/transactions/recent` | Transactions récentes | ✅ |
 
-### Bénéficiaires
+### Administration (ADMIN/SUPPORT uniquement)
 
 | Méthode | Endpoint | Description | Auth |
 |---------|----------|-------------|------|
-| GET | `/beneficiaries` | Liste des bénéficiaires | ✅ |
-| POST | `/beneficiaries/add` | Ajouter un bénéficiaire | ✅ |
+| GET | `/admin/stats` | Statistiques globales | ✅ ADMIN |
+| GET | `/admin/clients` | Liste des clients | ✅ ADMIN |
+| GET | `/admin/clients/:id` | Détail client | ✅ ADMIN |
+| PUT | `/admin/clients/:id` | Modifier client | ✅ ADMIN |
+| GET | `/admin/accounts` | Tous les comptes | ✅ ADMIN |
+| GET | `/admin/accounts/:id/transactions` | Transactions d'un compte | ✅ ADMIN |
+| POST | `/admin/accounts/:id/block` | Bloquer un compte | ✅ ADMIN |
+| POST | `/admin/accounts/:id/unblock` | Débloquer un compte | ✅ ADMIN |
 
 ## 🛠️ Développement
 
@@ -378,19 +432,12 @@ docker-compose logs -f
 
 # Voir les logs d'un service spécifique
 docker-compose logs -f backend
-docker-compose logs -f frontend
 
 # Redémarrer un service
 docker-compose restart backend
 
 # Arrêter tous les services
 docker-compose down
-
-# Arrêter et supprimer les volumes (⚠️ perte de données)
-docker-compose down -v
-
-# Reconstruire les images
-docker-compose build
 
 # Reconstruire et redémarrer
 docker-compose up -d --build
@@ -405,126 +452,30 @@ docker-compose exec backend sh
 # Re-seeder la base de données
 docker-compose exec backend npm run seed
 
-# Lancer Prisma Studio (interface graphique DB)
-docker-compose exec backend npm run studio
+# Lancer Prisma Studio
+docker-compose exec backend npx prisma studio
 # Puis ouvrir http://localhost:5555
 
-# Créer une nouvelle migration
-docker-compose exec backend npx prisma migrate dev --name nom_migration
+# Créer une migration
+docker-compose exec backend npx prisma migrate dev --name migration_name
 
 # Générer le client Prisma
 docker-compose exec backend npx prisma generate
-
-# Voir les logs SQL
-docker-compose exec backend npx prisma studio
-```
-
-### Commandes Frontend
-
-```bash
-# Accéder au conteneur frontend
-docker-compose exec frontend sh
-
-# Linter le code
-docker-compose exec frontend npm run lint
-
-# Formatter le code
-docker-compose exec frontend npm run format
-
-# Build de production
-docker-compose exec frontend npm run build
-```
-
-### Base de Données
-
-```bash
-# Accéder à PostgreSQL
-docker-compose exec dev-db psql -U postgres -d bank-platform
-
-# Voir toutes les tables
-\dt
-
-# Voir les utilisateurs
-SELECT * FROM "User";
-
-# Voir les comptes
-SELECT * FROM "BankAccount";
-
-# Backup de la base
-docker-compose exec dev-db pg_dump -U postgres bank-platform > backup.sql
-
-# Restore de la base
-docker-compose exec -T dev-db psql -U postgres bank-platform < backup.sql
 ```
 
 ## 🚢 Déploiement
 
-### Docker Compose (Production)
-
-1. **Créer un fichier `.env.production`**
-```env
-DATABASE_URL=postgresql://user:password@db-host:5432/iris_bank
-JWT_SECRET=your-secure-random-secret-key-256-bits
-JWT_EXPIRES_IN=7d
-NODE_ENV=production
-```
-
-2. **Modifier `docker-compose.yml` pour la production**
-```yaml
-environment:
-  - NODE_ENV=production
-  - DATABASE_URL=${DATABASE_URL}
-  - JWT_SECRET=${JWT_SECRET}
-```
-
-3. **Déployer**
-```bash
-docker-compose -f docker-compose.prod.yml up -d
-```
-
 ### Recommandations Production
 
-- ✅ Utiliser un service PostgreSQL managé (AWS RDS, DigitalOcean, etc.)
+- ✅ Utiliser un service PostgreSQL managé (AWS RDS, DigitalOcean)
 - ✅ Configurer HTTPS avec Let's Encrypt
 - ✅ Mettre en place un reverse proxy (Nginx, Traefik)
+- ✅ Configurer Mailtrap ou un vrai SMTP (SendGrid, Mailgun)
 - ✅ Activer les logs centralisés
 - ✅ Configurer des backups automatiques
 - ✅ Utiliser des secrets pour les variables sensibles
-- ✅ Mettre en place un monitoring (Sentry, Datadog, etc.)
+- ✅ Mettre en place un monitoring (Sentry, Datadog)
 - ✅ Activer rate limiting sur l'API
-
-## 🐛 Dépannage
-
-### Le backend ne démarre pas
-```bash
-# Vérifier les logs
-docker-compose logs backend
-
-# Vérifier que la DB est accessible
-docker-compose exec backend npx prisma db push
-```
-
-### Le frontend affiche des erreurs 504
-```bash
-# Nettoyer le cache Vite
-docker-compose exec frontend rm -rf node_modules/.vite
-docker-compose restart frontend
-```
-
-### Erreur "JWT_SECRET manquant"
-```bash
-# Vérifier les variables d'environnement
-docker-compose exec backend printenv | grep JWT_SECRET
-
-# Si vide, ajouter dans docker-compose.yml et redémarrer
-docker-compose up -d --force-recreate backend
-```
-
-### La base de données est vide après redémarrage
-```bash
-# Re-seeder la base
-docker-compose exec backend npm run seed
-```
 
 ## 📝 License
 
@@ -540,6 +491,7 @@ Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE) pour plus de
 - [Prisma](https://www.prisma.io/) pour l'ORM
 - [TanStack Query](https://tanstack.com/query) pour la gestion des données
 - [Radix UI](https://www.radix-ui.com/) pour les primitives UI accessibles
+- [Mailtrap](https://mailtrap.io/) pour les tests d'emails
 
 ---
 

@@ -47,7 +47,7 @@ const execute = async (req: Request, res: Response) => {
       }
 
       let beneficiary = await tx.beneficiary.findFirst({
-        where: { iban: toBeneficiaryIban }
+        where: { iban: toBeneficiaryIban, ownerId: userId }
       });
 
       if (!beneficiary) {

@@ -9,7 +9,7 @@ import userRoutes from './routes/user.routes.js';
 import authRoutes from './routes/auth.routes.js';
 import bankAccountRoutes from './routes/bankAccount.routes.js';
 import transactionRoutes from './routes/transaction.routes.js';
-import beneficiaryRoutes from './routes/Beneficiary.routes.js';
+import beneficiaryRoutes from './routes/beneficiary.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 
 config();

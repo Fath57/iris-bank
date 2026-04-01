@@ -39,9 +39,10 @@ export default function TransactionFilters({ filters, onChange }: TransactionFil
     onChange({ search: "", type: "ALL", dateFrom: "", dateTo: "", amountMax: "" });
 
   return (
-    <div className="rounded-xl border bg-background px-5 py-4 mb-6">
-      <div className="flex flex-wrap gap-3 items-end">
-        <div className="flex flex-col gap-1.5 flex-1 min-w-[180px]">
+    <div className="animate-fade-up delay-100 rounded-xl border border-border/60 bg-card shadow-sm px-4 sm:px-5 py-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1fr_auto_auto_auto_auto_auto] gap-3 items-end">
+        {/* Search */}
+        <div className="flex flex-col gap-1.5 sm:col-span-2 lg:col-span-1">
           <label className="text-xs text-muted-foreground">Recherche</label>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
@@ -54,13 +55,14 @@ export default function TransactionFilters({ filters, onChange }: TransactionFil
           </div>
         </div>
 
-        <div className="flex flex-col gap-1.5 min-w-[160px]">
+        {/* Type */}
+        <div className="flex flex-col gap-1.5">
           <label className="text-xs text-muted-foreground">Type</label>
           <Select
             value={filters.type}
             onValueChange={(v) => onChange({ ...filters, type: v as TransactionType | "ALL" })}
           >
-            <SelectTrigger className="h-9 text-sm">
+            <SelectTrigger className="h-9 text-sm w-full lg:w-[160px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -73,42 +75,46 @@ export default function TransactionFilters({ filters, onChange }: TransactionFil
           </Select>
         </div>
 
+        {/* Date from */}
         <div className="flex flex-col gap-1.5">
           <label className="text-xs text-muted-foreground">Du</label>
           <Input
             type="date"
-            className="h-9 text-sm w-[145px]"
+            className="h-9 text-sm"
             value={filters.dateFrom}
             onChange={(e) => onChange({ ...filters, dateFrom: e.target.value })}
           />
         </div>
 
+        {/* Date to */}
         <div className="flex flex-col gap-1.5">
           <label className="text-xs text-muted-foreground">Au</label>
           <Input
             type="date"
-            className="h-9 text-sm w-[145px]"
+            className="h-9 text-sm"
             value={filters.dateTo}
             onChange={(e) => onChange({ ...filters, dateTo: e.target.value })}
           />
         </div>
 
+        {/* Amount max */}
         <div className="flex flex-col gap-1.5">
           <label className="text-xs text-muted-foreground">Montant max (€)</label>
           <Input
             type="number"
-            className="h-9 text-sm w-[120px]"
+            className="h-9 text-sm w-full lg:w-[120px]"
             placeholder="ex: 500"
             value={filters.amountMax}
             onChange={(e) => onChange({ ...filters, amountMax: e.target.value })}
           />
         </div>
 
+        {/* Reset */}
         {hasActiveFilters && (
           <Button
             variant="ghost"
             size="sm"
-            className="h-9 gap-1.5 text-muted-foreground hover:text-foreground self-end"
+            className="h-9 gap-1.5 text-muted-foreground hover:text-foreground"
             onClick={reset}
           >
             <X className="h-3.5 w-3.5" />

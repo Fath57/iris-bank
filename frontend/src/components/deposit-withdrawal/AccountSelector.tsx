@@ -1,14 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { formatAmount } from "@/lib/format";
-
-export const ACCOUNT_META: Record<string, { name: string; label: string; badgeClass: string }> = {
-  CHECKING: { name: "Compte Courant",   label: "Courant", badgeClass: "bg-blue-50 text-blue-700 border-blue-200" },
-  SAVINGS:  { name: "Livret d'Épargne", label: "Épargne", badgeClass: "bg-emerald-50 text-emerald-700 border-emerald-200" },
-  BUSINESS: { name: "Compte Pro",       label: "Pro",     badgeClass: "bg-violet-50 text-violet-700 border-violet-200" },
-  LIVRET_A: { name: "Livret A",         label: "Livret A", badgeClass: "bg-purple-50 text-purple-700 border-purple-200" },
-  PEL:      { name: "PEL",              label: "PEL",     badgeClass: "bg-indigo-50 text-indigo-700 border-indigo-200" },
-};
+import { ACCOUNT_META } from "@/lib/accountMeta";
 
 interface Account {
   id: string;
@@ -25,11 +18,11 @@ interface AccountSelectorProps {
 
 export function AccountSelector({ accounts, selectedAccountId, onSelect }: AccountSelectorProps) {
   return (
-    <div>
+    <div className="animate-fade-up">
       <p className="text-xs uppercase tracking-widest text-muted-foreground/60 font-medium mb-3">
         Compte concerné
       </p>
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {accounts.map((acc) => {
           const m = ACCOUNT_META[acc.type] ?? ACCOUNT_META.CHECKING;
           const selected = acc.id === selectedAccountId;
@@ -38,20 +31,20 @@ export function AccountSelector({ accounts, selectedAccountId, onSelect }: Accou
               key={acc.id}
               onClick={() => onSelect(acc.id)}
               className={cn(
-                "rounded-xl border p-4 text-left transition-all space-y-2",
+                "rounded-xl border p-4 text-left transition-all duration-200 space-y-2",
                 selected
-                  ? "border-foreground/20 bg-background shadow-sm ring-1 ring-foreground/10"
-                  : "border-border bg-muted/30 hover:bg-muted/60"
+                  ? "border-primary/30 bg-primary/5 shadow-sm ring-1 ring-primary/10 dark:bg-primary/10"
+                  : "border-border bg-card hover:bg-muted/50 hover:border-border/80"
               )}
             >
               <div className="flex items-center justify-between">
                 <Badge variant="outline" className={cn("text-[10px] px-2 py-0.5 rounded-full", m.badgeClass)}>
                   {m.label}
                 </Badge>
-                {selected && <div className="h-2 w-2 rounded-full bg-foreground" />}
+                {selected && <div className="h-2 w-2 rounded-full bg-primary" />}
               </div>
               <p className="text-xs font-medium text-foreground leading-tight">{m.name}</p>
-              <p className="text-sm font-bold tabular-nums">{formatAmount(Number(acc.balance))}</p>
+              <p className="text-sm font-bold tabular-nums text-foreground">{formatAmount(Number(acc.balance))}</p>
               <p className="font-mono text-[10px] text-muted-foreground/50 truncate">{acc.iban}</p>
             </button>
           );

@@ -26,11 +26,11 @@ export function OperationSummary({
   const isDeposit = operation === "DEPOSIT";
 
   return (
-    <Card className="overflow-hidden">
-      <CardHeader className="">
+    <Card className="overflow-hidden shadow-sm animate-fade-up delay-300">
+      <CardHeader>
         <p className={cn(
           "text-xs font-semibold uppercase tracking-widest",
-          isDeposit ? "text-emerald-600" : "text-red-500"
+          isDeposit ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400"
         )}>
           Récapitulatif
         </p>
@@ -40,24 +40,24 @@ export function OperationSummary({
         <div className="space-y-3 text-sm">
           <div className="flex justify-between">
             <span className="text-muted-foreground">Opération</span>
-            <span className={cn("font-semibold", isDeposit ? "text-emerald-700" : "text-red-600")}>
+            <span className={cn("font-semibold", isDeposit ? "text-emerald-700 dark:text-emerald-400" : "text-red-600 dark:text-red-400")}>
               {isDeposit ? "Dépôt" : "Retrait"}
             </span>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Compte</span>
-            <span className="font-medium">{meta.name}</span>
+            <span className="font-medium text-foreground">{meta.name}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Solde actuel</span>
-            <span className="font-medium tabular-nums">{formatAmount(balance)}</span>
+            <span className="font-medium tabular-nums text-foreground">{formatAmount(balance)}</span>
           </div>
 
           {isValid && parsed !== null && (
             <>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Montant</span>
-                <span className={cn("font-semibold tabular-nums", isDeposit ? "text-emerald-700" : "text-red-600")}>
+                <span className={cn("font-semibold tabular-nums", isDeposit ? "text-emerald-700 dark:text-emerald-400" : "text-red-600 dark:text-red-400")}>
                   {isDeposit ? "+" : "−"}{formatAmount(parsed)}
                 </span>
               </div>
@@ -66,7 +66,7 @@ export function OperationSummary({
                 <span className="text-muted-foreground">Solde après opération</span>
                 <span className={cn(
                   "font-bold text-base tabular-nums",
-                  isOverdraft ? "text-red-600" : "text-foreground"
+                  isOverdraft ? "text-red-600 dark:text-red-400" : "text-foreground"
                 )}>
                   {formatAmount(isDeposit ? balance + parsed : balance - parsed)}
                 </span>
@@ -85,7 +85,7 @@ export function OperationSummary({
           size="lg"
           className={cn(
             "w-full font-medium gap-2 mt-2",
-            !isDeposit && !isOverdraft && "bg-red-600 hover:bg-red-700"
+            !isDeposit && !isOverdraft && "bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700"
           )}
           onClick={onSubmit}
           disabled={isPending || isOverdraft || !isValid}

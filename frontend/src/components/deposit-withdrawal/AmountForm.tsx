@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 
 const QUICK_AMOUNTS = [20, 50, 100, 200, 500];
 
@@ -23,9 +24,11 @@ export function AmountForm({
   onAmountChange,
   onMotifChange,
 }: AmountFormProps) {
+  const numericAmount = parseFloat(amount.replace(",", "."));
+
   return (
     <>
-      <Card>
+      <Card className="animate-fade-up delay-200 shadow-sm">
         <CardContent className="pt-5 space-y-5">
           <div className="space-y-2">
             <Label htmlFor="amount">Montant</Label>
@@ -35,12 +38,16 @@ export function AmountForm({
               </span>
               <Input
                 id="amount"
-                type="number"
-                min="0"
-                step="0.01"
+                type="text"
+                inputMode="decimal"
                 placeholder="0,00"
                 value={amount}
-                onChange={(e) => onAmountChange(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === "" || /^[0-9]*[.,]?[0-9]{0,2}$/.test(val)) {
+                    onAmountChange(val);
+                  }
+                }}
                 className="pl-10 text-2xl font-bold h-14 tracking-tight tabular-nums"
               />
             </div>
@@ -49,7 +56,12 @@ export function AmountForm({
                 <button
                   key={q}
                   onClick={() => onAmountChange(String(q))}
-                  className="rounded-full border border-border bg-muted/40 px-3 py-1 text-xs text-muted-foreground hover:bg-muted transition-colors"
+                  className={cn(
+                    "rounded-full border px-3 py-1 text-xs font-medium transition-all duration-150",
+                    numericAmount === q
+                      ? "border-primary/40 bg-primary/10 text-primary dark:bg-primary/15"
+                      : "border-border bg-muted/40 text-muted-foreground hover:bg-muted hover:text-foreground"
+                  )}
                 >
                   {q} €
                 </button>
@@ -75,7 +87,7 @@ export function AmountForm({
       </Card>
 
       {(error || isOverdraft) && (
-        <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 font-medium">
+        <div className="flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-600 dark:text-red-400 font-medium animate-fade-up">
           <AlertTriangle className="h-4 w-4 shrink-0" />
           {error || "Solde insuffisant pour effectuer ce retrait."}
         </div>

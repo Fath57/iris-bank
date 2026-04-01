@@ -13,15 +13,34 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { Outlet } from "react-router-dom"
+import { Outlet, useLocation } from "react-router-dom"
+import { ThemeToggle } from "@/components/theme-toggle"
+
+const ADMIN_PAGE_TITLES: Record<string, string> = {
+  "/admin/dashboard": "Tableau de bord",
+  "/admin/clients": "Clients",
+  "/admin/accounts": "Comptes",
+}
+
+function getAdminPageTitle(pathname: string): string {
+  if (ADMIN_PAGE_TITLES[pathname]) return ADMIN_PAGE_TITLES[pathname]
+
+  if (/^\/admin\/clients\/\d+$/.test(pathname)) return "Détail client"
+  if (/^\/admin\/accounts\/\d+\/transactions$/.test(pathname)) return "Transactions du compte"
+
+  return "Administration"
+}
 
 export default function AdminLayout() {
+  const { pathname } = useLocation()
+  const pageTitle = getAdminPageTitle(pathname)
+
   return (
     <SidebarProvider>
       <AdminSidebar />
       <SidebarInset className="bg-secondary/50">
-        <header className="flex h-16 shrink-0 items-center gap-2">
-          <div className="flex items-center gap-2 px-4">
+        <header className="flex h-16 shrink-0 items-center justify-between gap-2 px-4">
+          <div className="flex items-center gap-2">
             <SidebarTrigger className="-ml-1" />
             <Separator
               orientation="vertical"
@@ -36,11 +55,12 @@ export default function AdminLayout() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>IRIS Bank</BreadcrumbPage>
+                  <BreadcrumbPage>{pageTitle}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
           </div>
+          <ThemeToggle />
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <Outlet />

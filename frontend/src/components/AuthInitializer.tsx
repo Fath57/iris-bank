@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 import api from "../api/axios";
 import useAuthStore from "../store/authStore";
 
@@ -30,7 +31,7 @@ export default function AuthInitializer({ children }: { children: React.ReactNod
   if (isLoading) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
-        <p className="text-muted-foreground">Vérification de la session...</p>
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }

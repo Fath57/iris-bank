@@ -35,7 +35,7 @@ export const sendVerificationEmail = async (to: string, code: string, firstName:
           </p>
           <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;" />
           <p style="font-size: 12px; color: #aaa; text-align: center;">
-            © 2024 IRIS Bank. Tous droits réservés.
+            © 2026 IRIS Bank. Tous droits réservés.
           </p>
         </div>
       `,

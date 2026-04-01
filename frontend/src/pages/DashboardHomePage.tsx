@@ -1,30 +1,32 @@
-import useAuthStore from "@/store/authStore";
+import { Link } from "react-router-dom";
 import StatsCards from "@/components/dashboard/StatsCards";
 import RecentTransactions from "@/components/dashboard/RecentTransactions";
 import DashboardAside from "@/components/dashboard/DashboardAside";
 import { Button } from "@/components/ui/button";
 
 export default function DashboardPage() {
-  const user = useAuthStore((state) => state.user);
-
   return (
-    <div className="flex flex-col gap-4 p-6">
+    <div className="flex flex-col gap-6 p-4 sm:p-6">
       <StatsCards />
-      <div className="grid grid-cols-5 gap-10 pt-10">
-        <div className="col-span-3">
+
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        {/* Recent transactions */}
+        <div className="lg:col-span-3">
           <div className="flex items-center justify-between mb-5">
-            <div>
-              <h2 className="text-2xl text-foreground font-bold tracking-tight">Dernières transactions</h2>
-            </div>
-            <Button className="cursor-pointer p-4">
-              Voir tout
-            </Button>
+            <h2 className="text-xl font-bold tracking-tight text-foreground">Dernières transactions</h2>
+            <Link to="/transactions">
+              <Button variant="outline" size="sm">
+                Voir tout
+              </Button>
+            </Link>
           </div>
-            <RecentTransactions />
-          </div>
-          <div className="col-span-2">
-            <DashboardAside />
-          </div>
+          <RecentTransactions />
+        </div>
+
+        {/* Profile aside */}
+        <div className="lg:col-span-2">
+          <DashboardAside />
+        </div>
       </div>
     </div>
   );

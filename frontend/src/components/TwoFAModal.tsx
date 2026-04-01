@@ -32,7 +32,7 @@ export function TwoFAModal({ isEnabled, onClose, onSuccess }: TwoFAModalProps) {
 
   const isPending = setupMutation.isPending || confirmMutation.isPending || disableMutation.isPending;
 
-  // Déclenche le setup dès l'ouverture si activation
+  // Lance le setup 2FA lors du clic sur "Générer le QR Code"
   const handleStartSetup = () => {
     setupMutation.mutate(undefined, {
       onSuccess: (data) => {

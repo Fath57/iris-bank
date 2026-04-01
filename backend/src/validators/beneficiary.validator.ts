@@ -1,4 +1,4 @@
-import z from "zod";
+import { z } from "zod";
 
 
 const ibanRegex = /^[A-Z]{2}\d{2}[A-Z0-9]{1,30}$/;

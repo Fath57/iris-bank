@@ -26,7 +26,9 @@ export const useLogin = () => {
       return response.data;
     },
     onSuccess: (data) => {
-      setUser(data.data.user);
+      if (data.data?.user) {
+        setUser(data.data.user);
+      }
     },
   });
 };

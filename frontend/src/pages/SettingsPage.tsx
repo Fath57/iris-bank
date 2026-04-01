@@ -358,7 +358,7 @@ export default function SettingsPage() {
         <TwoFAModal
           isEnabled={twoFactorEnabled}
           onClose={() => setTwoFAModalOpen(false)}
-          onSuccess={() => setTwoFactorEnabled(!twoFactorEnabled)}
+          onSuccess={() => setTwoFactorEnabled((prev) => !prev)}
         />
       )}
     </div>

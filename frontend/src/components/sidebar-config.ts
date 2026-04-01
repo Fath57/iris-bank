@@ -2,8 +2,8 @@ import {
   LayoutDashboard,
   FileText,
   Settings,
-  ArrowDownUp,
-  Send,
+  Users,
+
 } from "lucide-react"
 
 
@@ -18,23 +18,23 @@ export const SidebarConfig = {
     {
       title: "Retrait / Dépôt",
       url: "/deposit-withdraw",
-      icon: ArrowDownUp,
+      icon: Users,
     },
     {
       title: "Virements",
       url: "/transactions",
-      icon: Send,
+      icon: Users,
     },
     {
       title: "Mes comptes",
       url: "/accounts",
       icon: FileText,
-    },
+    },    
   ],
   navSecondary: [
     {
-      title: "Paramètres",
-      url: "/settings",
+      title: "Mon profil",
+      url: "/profil",
       icon: Settings,
     },
   ],

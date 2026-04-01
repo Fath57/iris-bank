@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom"
+import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import HomePage from "./pages/HomePage"
 import LoginPage from "./pages/LoginPage"
@@ -43,14 +43,15 @@ const router = createBrowserRouter([
     element: <PrivacyPolicyPage />,
   },
   {
-    element: <ProtectedRoute />,
+    element: <ProtectedRoute />, 
     children: [
       {
         path: "/dashboard",
         element: <DashboardLayout />,
         children: [
           { index: true, element: <DashboardPage /> },
-          { path: "settings", element: <Navigate to="/settings" replace /> },
+          { path: "settings", element: <div>Page Paramètres</div> },
+          { path: "users", element: <div>Page Utilisateurs</div> },
         ]
       },
       {
@@ -68,7 +69,7 @@ const router = createBrowserRouter([
         ]
       },
       {
-        path: "/accounts/:id",
+        path: "/accounts/:id", 
         element: <DashboardLayout />,
         children: [
           { index: true, element: <AccountDetailPage /> },

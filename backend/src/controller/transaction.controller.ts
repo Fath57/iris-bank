@@ -3,7 +3,7 @@ import type { Request, Response } from "express";
 
 const verify = async (req: Request, res: Response) => {
   const { fromAccountIban } = req.body;
-
+  
   if (!req.user || !req.user.id) return res.status(401).json({ message: "Non autorisé" });
   const userId = Number(req.user.id);
 
@@ -16,9 +16,9 @@ const verify = async (req: Request, res: Response) => {
       return res.status(403).json({ message: "Compte source non autorisé ou introuvable" });
     }
 
-    return res.status(200).json({
-      status: "success",
-      message: "Transaction vérifiée avec succès, prête pour confirmation"
+    return res.status(200).json({ 
+      status: "success", 
+      message: "Transaction vérifiée avec succès, prête pour confirmation" 
     });
   } catch (error) {
     console.error("Erreur lors de la vérification:", error);
@@ -30,13 +30,13 @@ const verify = async (req: Request, res: Response) => {
 
 const execute = async (req: Request, res: Response) => {
   const { fromAccountIban, toBeneficiaryIban, amount, toBeneficiaryName, motif } = req.body;
-
+  
   if (!req.user || !req.user.id) return res.status(401).json({ message: "Non autorisé" });
   const userId = Number(req.user.id);
 
   try {
     const result = await prisma.$transaction(async (tx) => {
-
+      
       const sourceAccount = await tx.bankAccount.findUnique({
         where: { iban: fromAccountIban },
         include: { user: true }
@@ -46,7 +46,7 @@ const execute = async (req: Request, res: Response) => {
         throw new Error("Compte source invalide");
       }
 
-      let beneficiary = await tx.beneficiary.findFirst({
+      let beneficiary = await tx.beneficiary.findUnique({
         where: { iban: toBeneficiaryIban }
       });
 
@@ -98,15 +98,15 @@ const execute = async (req: Request, res: Response) => {
       return { sourceTx, updatedBalance: updatedSource.balance };
     });
 
-    return res.status(201).json({
-      status: "success",
-      data: result
+    return res.status(201).json({ 
+      status: "success", 
+      data: result 
     });
 
   } catch (error: any) {
     console.error("Erreur lors de la transaction:", error);
-    return res.status(400).json({
-      message: error.message || "La transaction a échoué"
+    return res.status(400).json({ 
+      message: error.message || "La transaction a échoué" 
     });
   }
 };
@@ -209,23 +209,23 @@ const getRecent = async (req: Request, res: Response) => {
     if (!req.user?.id) {
       return res.status(401).json({ message: "Non autorisé" });
     }
-
+ 
     const userId = Number(req.user.id);
-
+ 
     const rawLimit = Number(req.query.limit) || 10;
     const limit = Math.min(rawLimit, 50);
-
+ 
     const userAccountIds = await prisma.bankAccount
       .findMany({
         where: { userId },
         select: { id: true },
       })
       .then((accounts) => accounts.map((a) => a.id));
-
+ 
     if (userAccountIds.length === 0) {
       return res.status(200).json({ status: "success", data: [] });
     }
-
+ 
     const transactions = await prisma.transaction.findMany({
       where: {
         accountId: { in: userAccountIds },
@@ -246,7 +246,7 @@ const getRecent = async (req: Request, res: Response) => {
         },
       },
     });
-
+ 
     return res.status(200).json({
       status: "success",
       data: transactions,

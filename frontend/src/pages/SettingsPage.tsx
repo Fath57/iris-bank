@@ -17,9 +17,8 @@ import {
 } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { User, Mail, Phone, MapPin, Shield } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
-import { TwoFAModal } from "@/components/TwoFAModal";
 
 interface UserProfile {
   firstName: string;
@@ -27,7 +26,6 @@ interface UserProfile {
   email: string;
   phoneNumber: string;
   role: string;
-  twoFactorEnabled: boolean;
   address: {
     street: string;
     city: string;
@@ -45,7 +43,6 @@ const roleLabels: Record<string, { label: string; className: string }> = {
 export default function SettingsPage() {
   const queryClient = useQueryClient();
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
-  const [twoFAModalOpen, setTwoFAModalOpen] = useState(false);
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: "",
@@ -64,12 +61,6 @@ export default function SettingsPage() {
     },
   });
 
-  useEffect(() => {
-    if (data) {
-      setTwoFactorEnabled(data.twoFactorEnabled ?? false);
-    }
-  }, [data]);
-
   const changePasswordMutation = useMutation({
     mutationFn: async (data: { currentPassword: string; newPassword: string }) => {
       const response = await api.put("/users/change-password", data);
@@ -82,6 +73,19 @@ export default function SettingsPage() {
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || "Erreur lors du changement de mot de passe");
+    },
+  });
+
+  const toggle2FAMutation = useMutation({
+    mutationFn: async (enabled: boolean) => {
+      const response = await api.post("/users/toggle-2fa", { enabled });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message);
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Erreur lors de la modification");
     },
   });
 
@@ -102,8 +106,9 @@ export default function SettingsPage() {
     });
   };
 
-  const handle2FAToggle = (_checked: boolean) => {
-    setTwoFAModalOpen(true);
+  const handle2FAToggle = (checked: boolean) => {
+    setTwoFactorEnabled(checked);
+    toggle2FAMutation.mutate(checked);
   };
 
   if (isLoading) {
@@ -272,6 +277,7 @@ export default function SettingsPage() {
               <Switch
                 checked={twoFactorEnabled}
                 onCheckedChange={handle2FAToggle}
+                disabled={toggle2FAMutation.isPending}
               />
             </div>
           </div>
@@ -352,15 +358,6 @@ export default function SettingsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      {/* 2FA TOTP Modal */}
-      {twoFAModalOpen && (
-        <TwoFAModal
-          isEnabled={twoFactorEnabled}
-          onClose={() => setTwoFAModalOpen(false)}
-          onSuccess={() => setTwoFactorEnabled(!twoFactorEnabled)}
-        />
-      )}
     </div>
   );
 }

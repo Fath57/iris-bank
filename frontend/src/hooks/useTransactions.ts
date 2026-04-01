@@ -1,11 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
 import api from '../api/axios';
-import type { TransactionFormValues } from '../types/TransactionForm';
-
-export type ExecuteTransactionPayload = Pick<
-  TransactionFormValues,
-  'fromAccountIban' | 'toBeneficiaryIban' | 'amount' | 'toBeneficiaryName' | 'motif' | 'mode'
->;
 
 export const useVerifyTransaction = () => {
   return useMutation({
@@ -18,7 +12,7 @@ export const useVerifyTransaction = () => {
 
 export const useExecuteTransaction = () => {
   return useMutation({
-    mutationFn: async (data: ExecuteTransactionPayload) => {
+    mutationFn: async (data: any) => {
       const response = await api.post('/transactions/execute', data);
       return response.data;
     },

@@ -7,8 +7,6 @@ import { ConfirmTransactionModal } from "@/components/newTransaction/ConfirmTran
 import type { TransactionFormValues } from "@/types/TransactionForm";
 import { useAccounts } from "@/hooks/useAccounts";
 import { useVerifyTransaction, useExecuteTransaction } from "@/hooks/useTransactions";
-import { accountTypeLabels } from "@/data/accountDetails";
-import { toast } from "sonner";
 
 export default function NewTransactionPage() {
   const navigate = useNavigate();
@@ -21,11 +19,13 @@ export default function NewTransactionPage() {
 
   const accounts = accountsData?.accounts || [];
 
+  console.log("Le vrai tableau de comptes :", accounts);
+
   useEffect(() => {
     if (accounts.length > 0 && !values) {
       setValues({
         mode: "externe",
-        fromAccountName: accountTypeLabels[accounts[0].type] ?? "Compte Principal",
+        fromAccountName: accounts[0].name || "Compte Principal",
         fromAccountIban: accounts[0].iban,
         fromAccountBalance: accounts[0].balance,
         toBeneficiaryName: "",
@@ -46,8 +46,9 @@ export default function NewTransactionPage() {
       },
       {
         onSuccess: () => setShowConfirm(true),
-        onError: (error: any) => {
-          toast.error(error.response?.data?.message || "Erreur lors de la vérification du virement");
+        onError: (error) => {
+          console.error("Erreur lors de la vérification", error);
+          // TODO: Ajouter un toast d'erreur ici si tu en as un
         },
       }
     );
@@ -71,8 +72,9 @@ export default function NewTransactionPage() {
             state: { success: true, amount: values.amount, beneficiary: values.toBeneficiaryName },
           });
         },
-        onError: (error: any) => {
-          toast.error(error.response?.data?.message || "Erreur lors de l'exécution du virement");
+        onError: (error) => {
+          console.error("Erreur lors de l'exécution", error);
+          // TODO: Ajouter un toast d'erreur ici
         },
       }
     );
@@ -110,12 +112,12 @@ export default function NewTransactionPage() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
         {/* On passe les vrais comptes au formulaire */}
         <TransactionForm values={values} onChange={setValues} accounts={accounts} />
-
+        
         {/* On bloque le bouton pendant la vérification */}
-        <TransactionRecap
-          values={values}
-          onSubmit={handleVerify}
-          isPending={verifyMutation.isPending}
+        <TransactionRecap 
+          values={values} 
+          onSubmit={handleVerify} 
+          isPending={verifyMutation.isPending} 
         />
       </div>
 

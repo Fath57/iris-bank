@@ -1,4 +1,3 @@
-import { verify as verifyTOTP } from "otplib";
 import type { Request, Response } from "express";
 import { generateToken } from "../utils/generateToken.js";
 import { prisma } from "../config/db.js";
@@ -67,103 +66,62 @@ const register = async (req: Request, res: Response) => {
 
 
 const login = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+	const {email, password} = req.body;
 
-  const user = await prisma.user.findUnique({
-    where: { email: email },
-  });
+	const user = await prisma.user.findUnique({
+		where: {email: email},
+	});
 
-  if (!user) {
-    return res.status(401).json({ error: "Invalid email or password" });
-  }
+	if (!user) {
+		return res
+			.status(401)
+			.json({ error: "Invalid email or password" });
+	}
 
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-  if (!isPasswordValid) {
-    return res.status(401).json({ error: "Invalid email or password" });
-  }
+	// Verify password
+	const isPasswordValid = await bcrypt.compare(password, user.password);
 
-  // Si 2FA activé : ne pas émettre le JWT, demander le code TOTP
-  if (user.twoFactorEnabled) {
-    return res.status(200).json({
-      status: "success",
-      requiresTwoFactor: true,
-      data: { userId: user.id },
-    });
-  }
+	if (!isPasswordValid) {
+		return res
+			.status(401)
+			.json({ error: "Invalid email or password" });
+	}
 
-  // Connexion normale sans 2FA
-  const token = generateToken(user.id, res);
+	// Generate JWT token
+	const token = generateToken(user.id, res);
 
-  res.status(201).json({
-    status: "success",
-    data: {
-      user: {
-        id: user.id,
-        email: email,
-        role: user.role,
-        firstName: user.firstName,
-        lastName: user.lastName,
-      },
-      token,
-    },
-  });
-};
-
-// Vérifie le code TOTP et émet le JWT
-const verify2FA = async (req: Request, res: Response) => {
-  const { userId, code } = req.body;
-
-  if (!userId || !code) {
-    return res.status(400).json({ message: "userId et code requis" });
-  }
-
-  const user = await prisma.user.findUnique({
-    where: { id: Number(userId) },
-  });
-
-  if (!user || !user.twoFactorEnabled || !user.twoFactorSecret) {
-    return res.status(400).json({ message: "2FA non configuré pour cet utilisateur" });
-  }
-
-  const isValid = await verifyTOTP({ token: code, secret: user.twoFactorSecret });
-  if (!isValid) {
-    return res.status(400).json({ message: "Code invalide ou expiré" });
-  }
-
-  const token = generateToken(user.id, res);
-
-  return res.status(200).json({
-    status: "success",
-    data: {
-      user: {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-        firstName: user.firstName,
-        lastName: user.lastName,
-      },
-      token,
-    },
-  });
+	res.status(201).json({
+		status: "success",
+		data: {
+			user: {
+			  id: user.id,
+				email: email,
+				role: user.role,
+				firstName: user.firstName,
+				lastName: user.lastName,
+			},
+			token,
+		},
+	});
 };
 
 
 const logout = async (req: Request, res: Response) => {
-  res.cookie("jwt", "", {
-    httpOnly: true,
-    expires: new Date(0)
-  });
+	res.cookie("jwt", "", {
+		httpOnly: true,
+		expires: new Date(0)
+	});
 
-  res.status(200).json({
-    status: "success",
-    message: "Logged out successfully",
-  });
+	res.status(200).json({
+		status: "success",
+		message: "Logged out successfully",
+	});
 };
 
 const getMe = async (req: Request, res: Response) => {
-  const user = req.user;
+  const user = req.user; 
 
-  if (!user) {
+	if (!user) {
     return res.status(401).json({ error: "Not authenticated" });
   }
 
@@ -304,4 +262,4 @@ const resendVerificationCode = async (req: Request, res: Response) => {
   });
 };
 
-export { register, login, logout, getMe, verifyEmail, resendVerificationCode, verify2FA };
+export { register, login, logout, getMe, verifyEmail, resendVerificationCode };

@@ -31,8 +31,8 @@ services:
       - CHOKIDAR_INTERVAL=1000
       - MAILTRAP_HOST=sandbox.smtp.mailtrap.io
       - MAILTRAP_PORT=2525
-      - MAILTRAP_USER=3c5250417e2bd0
-      - MAILTRAP_PASS=6983393eb4d270
+      - MAILTRAP_USER=b01af44c3bc7b3
+      - MAILTRAP_PASS=68eacdfab1bfb5
     depends_on:
       - dev-db
     networks:

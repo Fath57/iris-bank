@@ -21,7 +21,7 @@ export const SidebarConfig = {
       icon: ArrowDownUp,
     },
     {
-      title: "Virements",
+      title: "Transactions",
       url: "/transactions",
       icon: Send,
     },

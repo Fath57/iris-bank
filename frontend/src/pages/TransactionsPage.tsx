@@ -56,26 +56,27 @@ export default function TransactionsPage() {
 
   if (isLoadingAccounts) {
     return (
-      <div className="flex items-center justify-center h-64 gap-3 text-muted-foreground">
-        <Loader2 className="h-5 w-5 animate-spin" />
-        <span className="text-sm">Chargement des comptes...</span>
+      <div className="flex items-center justify-center h-64 text-muted-foreground">
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
       </div>
     );
   }
 
   if (isErrorAccounts) {
     return (
-      <div className="p-6 text-center text-destructive border border-destructive rounded-xl max-w-md mx-auto mt-10">
+      <div className="p-6 text-center text-destructive border border-destructive/30 bg-destructive/5 rounded-xl max-w-md mx-auto mt-10">
         Erreur lors du chargement des comptes.
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col p-6">
+    <div className="flex flex-col p-4 sm:p-6">
       <div className="mb-6">
+        <p className="text-xs uppercase tracking-widest text-muted-foreground/60 font-medium mb-1">
+          Historique
+        </p>
         <h1 className="text-2xl font-bold tracking-tight text-foreground">Transactions</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">Historique de vos opérations</p>
       </div>
 
       <AccountHeader
@@ -88,12 +89,11 @@ export default function TransactionsPage() {
       <TransactionFilters filters={filters} onChange={setFilters} />
 
       {isLoadingDetail ? (
-        <div className="flex items-center justify-center h-48 gap-3 text-muted-foreground">
-          <Loader2 className="h-5 w-5 animate-spin" />
-          <span className="text-sm">Chargement des transactions...</span>
+        <div className="flex items-center justify-center h-48 text-muted-foreground">
+          <Loader2 className="h-5 w-5 animate-spin text-primary" />
         </div>
       ) : isErrorDetail ? (
-        <div className="p-6 text-center text-destructive border border-destructive rounded-xl">
+        <div className="p-6 text-center text-destructive border border-destructive/30 bg-destructive/5 rounded-xl">
           Erreur lors du chargement des transactions.
         </div>
       ) : (

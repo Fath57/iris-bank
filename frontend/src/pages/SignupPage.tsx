@@ -1,6 +1,6 @@
 import { SignupForm } from "@/components/signup-form";
 import { Link } from "react-router-dom";
-import { Shield, CreditCard, TrendingUp, CheckCircle2, Star } from "lucide-react";
+import { Shield, TrendingUp, CheckCircle2 } from "lucide-react";
 
 export default function SignupPage() {
   return (

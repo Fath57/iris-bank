@@ -6,7 +6,7 @@ import { statusConfig } from "@/config/account.config";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCloseAccount } from "@/hooks/useCloseAccount";
-import { Trash2, AlertTriangle, Loader2, X } from "lucide-react";
+import { Trash2, AlertTriangle, Loader2 } from "lucide-react";
 
 interface AccountHeroProps {
   accountId: string; // Ajout de l'ID

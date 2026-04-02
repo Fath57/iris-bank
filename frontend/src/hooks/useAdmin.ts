@@ -5,11 +5,7 @@ import type {
   Client,
   ClientWithAccounts,
   AccountWithUser,
-  AccountWithTransactions,
   UpdateClientData,
-  BlockAccountData,
-  UnblockAccountData,
-  SearchClientsParams,
 } from "@/types/Admin";
 import { toast } from "sonner";
 

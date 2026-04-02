@@ -198,12 +198,15 @@ cd iris-bank
 
 2. **Configurer les variables d'environnement**
 ```bash
-# Copier l'exemple
+# Backend (obligatoire)
 cp backend/.env.example backend/.env
+nano backend/.env   # Renseigner les credentials SMTP, JWT_SECRET, etc.
 
-# Modifier avec vos propres valeurs
-nano backend/.env
+# Frontend (optionnel en dev, requis en prod)
+cp frontend/.env.example frontend/.env
 ```
+
+> **Important** : Le `docker-compose.yml` charge les variables depuis `backend/.env` via `env_file`. Sans ce fichier, les services ne démarreront pas correctement.
 
 3. **Démarrer les services Docker**
 ```bash
@@ -231,20 +234,36 @@ docker-compose exec backend npm run seed
 
 ### Variables d'Environnement
 
-#### Backend (.env)
-```env
-DATABASE_URL=postgresql://postgres:123@dev-db:5432/bank-platform?schema=public
-JWT_SECRET=your-super-secret-jwt-key-change-this-in-production-12345678
-JWT_EXPIRES_IN=7d
-NODE_ENV=development
-PORT=5001
+Les variables sont centralisées dans des fichiers `.env` (non versionnés). Copier les `.env.example` fournis :
 
-# Mailtrap SMTP Configuration
-MAILTRAP_HOST=sandbox.smtp.mailtrap.io
-MAILTRAP_PORT=2525
-MAILTRAP_USER=your_mailtrap_user
-MAILTRAP_PASS=your_mailtrap_password
+```bash
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env       # optionnel en dev
 ```
+
+#### Backend (`backend/.env`)
+
+| Variable | Description | Exemple |
+|----------|-------------|---------|
+| `DATABASE_URL` | URL de connexion PostgreSQL | `postgresql://postgres:123@dev-db:5432/bank-platform?schema=public` |
+| `DB_PASSWORD` | Mot de passe PostgreSQL (utilisé par docker-compose) | `123` |
+| `JWT_SECRET` | Clé secrète pour signer les tokens JWT | `change-this-in-production` |
+| `JWT_EXPIRES_IN` | Durée de validité des tokens | `7d` |
+| `NODE_ENV` | Environnement d'exécution | `development` / `production` |
+| `PORT` | Port de l'API | `5001` |
+| `CORS_ORIGIN` | URL du frontend autorisée | `http://localhost:5173` |
+| `MAILTRAP_HOST` | Serveur SMTP | `sandbox.smtp.mailtrap.io` |
+| `MAILTRAP_PORT` | Port SMTP | `2525` |
+| `MAILTRAP_USER` | Identifiant SMTP | |
+| `MAILTRAP_PASS` | Mot de passe SMTP | |
+
+#### Frontend (`frontend/.env`)
+
+| Variable | Description | Exemple |
+|----------|-------------|---------|
+| `VITE_API_URL` | URL de l'API backend (production uniquement) | `https://api.votre-domaine.com` |
+
+> En développement, l'API est proxifiée via Vite (`/api` -> `http://backend:5001`), donc `VITE_API_URL` n'est pas nécessaire.
 
 ### Ports
 
@@ -324,7 +343,9 @@ iris-bank/
 │   │   ├── utils/             # Utilitaires (JWT, etc.)
 │   │   ├── validators/        # Schémas Zod (5 types de comptes)
 │   │   └── server.ts          # Point d'entrée
-│   ├── dockerfile
+│   ├── Dockerfile              # Dockerfile production (Dokku)
+│   ├── entrypoint.sh           # Migrations Prisma au démarrage
+│   ├── .env.example            # Variables d'environnement
 │   └── package.json
 │
 ├── frontend/                   # Application React
@@ -357,11 +378,15 @@ iris-bank/
 │   │   ├── types/             # Types TypeScript
 │   │   ├── App.tsx            # Routes
 │   │   └── main.tsx           # Point d'entrée
-│   ├── dockerfile
+│   ├── Dockerfile              # Dockerfile production (multi-stage nginx)
+│   ├── nginx.conf.template     # Config nginx pour SPA
+│   ├── entrypoint.sh           # Entrypoint nginx
+│   ├── .env.example            # Variables d'environnement
 │   ├── vite.config.ts
 │   └── package.json
 │
-├── docker-compose.yml          # Orchestration services
+├── Dockerfile                  # Dockerfile racine (utilisé par Dokku)
+├── docker-compose.yml          # Orchestration services (dev local)
 ├── README.md                   # Ce fichier
 └── CHANGELOG.md               # Historique des versions
 ```
@@ -463,19 +488,135 @@ docker-compose exec backend npx prisma migrate dev --name migration_name
 docker-compose exec backend npx prisma generate
 ```
 
-## 🚢 Déploiement
+## 🚢 Déploiement (Dokku)
 
-### Recommandations Production
+Le projet se déploie sur un serveur Dokku avec deux apps distinctes (backend + frontend).
 
-- ✅ Utiliser un service PostgreSQL managé (AWS RDS, DigitalOcean)
-- ✅ Configurer HTTPS avec Let's Encrypt
-- ✅ Mettre en place un reverse proxy (Nginx, Traefik)
-- ✅ Configurer Mailtrap ou un vrai SMTP (SendGrid, Mailgun)
-- ✅ Activer les logs centralisés
-- ✅ Configurer des backups automatiques
-- ✅ Utiliser des secrets pour les variables sensibles
-- ✅ Mettre en place un monitoring (Sentry, Datadog)
-- ✅ Activer rate limiting sur l'API
+### Architecture
+
+```
+Client --> Dokku Nginx --> iris-bank-front (nginx:alpine, fichiers statiques)
+Client --> Dokku Nginx --> iris-bank-back  (node:22-slim, Express API)
+                              |
+                              v
+                         dokku-postgres (PostgreSQL)
+```
+
+### Prérequis Serveur
+
+- Dokku installé sur le serveur
+- Plugin postgres : `sudo dokku plugin:install https://github.com/dokku/dokku-postgres.git postgres`
+- Plugin letsencrypt : `sudo dokku plugin:install https://github.com/dokku/dokku-letsencrypt.git letsencrypt`
+
+### 1. Créer les apps et la base de données
+
+```bash
+# Créer les apps
+dokku apps:create iris-bank-back
+dokku apps:create iris-bank-front
+
+# Forcer le builder Dockerfile
+dokku builder:set iris-bank-back selected dockerfile
+dokku builder:set iris-bank-front selected dockerfile
+
+# Créer et lier la DB
+dokku postgres:create iris-bank-db
+dokku postgres:link iris-bank-db iris-bank-back
+```
+
+### 2. Configurer les variables d'environnement
+
+```bash
+# Backend
+dokku config:set iris-bank-back \
+  DATABASE_URL="postgresql://..." \
+  JWT_SECRET="votre-secret-jwt-production" \
+  JWT_EXPIRES_IN=7d \
+  NODE_ENV=production \
+  CORS_ORIGIN=https://iris-bank-front.votre-domaine.com \
+  MAILTRAP_HOST=smtp.gmail.com \
+  MAILTRAP_PORT=587 \
+  MAILTRAP_USER=votre-email \
+  MAILTRAP_PASS=votre-app-password
+
+# Frontend (BACKEND_URL pour le proxy nginx interne)
+dokku config:set iris-bank-front \
+  BACKEND_URL=https://iris-bank-back.votre-domaine.com
+```
+
+> **Note** : `DATABASE_URL` est automatiquement injectée par `dokku postgres:link`, mais doit utiliser le préfixe `postgresql://` (pas `postgres://`) pour Prisma. Ajustez si nécessaire.
+
+### 3. Configurer les domaines et SSL
+
+```bash
+# Domaines
+dokku domains:enable iris-bank-back
+dokku domains:set iris-bank-back iris-bank-back.votre-domaine.com
+dokku domains:enable iris-bank-front
+dokku domains:set iris-bank-front iris-bank-front.votre-domaine.com
+
+# Ports
+dokku ports:set iris-bank-back http:80:5001 https:443:5001
+dokku ports:set iris-bank-front http:80:5000 https:443:5000
+
+# SSL avec Let's Encrypt
+dokku letsencrypt:set iris-bank-back email votre-email@exemple.com
+dokku letsencrypt:enable iris-bank-back
+dokku letsencrypt:set iris-bank-front email votre-email@exemple.com
+dokku letsencrypt:enable iris-bank-front
+```
+
+### 4. Déployer
+
+Le monorepo utilise un `Dockerfile` à la racine. Chaque app a sa propre branche de déploiement :
+
+- **`main` ou `feat/*`** : contient le `Dockerfile` backend
+- **`deploy`** : contient le `Dockerfile` frontend (remplacé à la racine)
+
+```bash
+# Backend (depuis main)
+git remote add dokku dokku@votre-serveur:iris-bank-back
+git push dokku main
+
+# Frontend (depuis la branche deploy)
+git remote add dokku-front dokku@votre-serveur:iris-bank-front
+git push dokku-front deploy:main
+```
+
+### 5. Seeder la base de données
+
+```bash
+dokku run iris-bank-back npx tsx prisma/seed.ts
+```
+
+### 6. Frontend - Variable d'API
+
+En production, le frontend appelle directement l'API backend. Créer un fichier `frontend/.env.production` :
+
+```env
+VITE_API_URL=https://iris-bank-back.votre-domaine.com
+```
+
+Ce fichier n'est **pas versionné** (`.gitignore`). Il doit être présent avant le build Docker du frontend.
+
+### Commandes utiles
+
+```bash
+# Voir les logs
+dokku logs iris-bank-back --tail
+dokku logs iris-bank-front --tail
+
+# Redéployer
+dokku ps:rebuild iris-bank-back
+dokku ps:rebuild iris-bank-front
+
+# Voir la config
+dokku config:show iris-bank-back
+dokku config:show iris-bank-front
+
+# Accéder à la DB
+dokku postgres:connect iris-bank-db
+```
 
 ## 📝 License
 

@@ -13,9 +13,94 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Separator } from "./ui/separator"
+import { PasswordStrength } from "./PasswordStrength"
 import api from "@/api/axios"
 import { toast } from "sonner"
 import useAuthStore from "@/store/authStore"
+import { Eye, EyeOff, User, MapPin, ShieldCheck, Check } from "lucide-react"
+
+const STEPS = [
+  { id: 1, label: "Identité", icon: User },
+  { id: 2, label: "Adresse", icon: MapPin },
+  { id: 3, label: "Vérification", icon: ShieldCheck },
+] as const
+
+function StepIndicator({ current }: { current: 1 | 2 | 3 }) {
+  return (
+    <div className="flex items-center justify-center gap-2 mb-6">
+      {STEPS.map((s, i) => {
+        const done = current > s.id
+        const active = current === s.id
+        const Icon = done ? Check : s.icon
+
+        return (
+          <div key={s.id} className="flex items-center gap-2">
+            {i > 0 && (
+              <div
+                className={cn(
+                  "w-8 h-px transition-colors duration-500",
+                  done ? "bg-primary" : "bg-border"
+                )}
+              />
+            )}
+            <div className="flex items-center gap-1.5">
+              <div
+                className={cn(
+                  "w-7 h-7 rounded-full flex items-center justify-center transition-all duration-500 text-xs font-semibold",
+                  done && "bg-primary text-primary-foreground",
+                  active && "bg-primary/10 text-primary ring-2 ring-primary/30",
+                  !done && !active && "bg-muted text-muted-foreground"
+                )}
+              >
+                <Icon className="h-3.5 w-3.5" strokeWidth={done ? 3 : 2} />
+              </div>
+              <span
+                className={cn(
+                  "text-[11px] font-medium tracking-wide hidden sm:block transition-colors duration-300",
+                  active ? "text-foreground" : "text-muted-foreground"
+                )}
+              >
+                {s.label}
+              </span>
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+function PasswordInput({
+  id,
+  value,
+  onChange,
+  placeholder,
+  ...props
+}: React.ComponentProps<typeof Input>) {
+  const [show, setShow] = useState(false)
+
+  return (
+    <div className="relative">
+      <Input
+        id={id}
+        type={show ? "text" : "password"}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        className="pr-10"
+        {...props}
+      />
+      <button
+        type="button"
+        tabIndex={-1}
+        onClick={() => setShow(!show)}
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/50 hover:text-muted-foreground transition-colors"
+      >
+        {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+      </button>
+    </div>
+  )
+}
 
 export function SignupForm({
   className,
@@ -58,8 +143,24 @@ export function SignupForm({
     if (localError) setLocalError("")
   }
 
+  const isPasswordStrong = () => {
+    const pw = formData.password
+    return (
+      pw.length >= 8 &&
+      /[A-Z]/.test(pw) &&
+      /[a-z]/.test(pw) &&
+      /[0-9]/.test(pw) &&
+      /[^A-Za-z0-9]/.test(pw)
+    )
+  }
+
   const handleNext = () => {
     if (formRef.current && !formRef.current.reportValidity()) return
+
+    if (!isPasswordStrong()) {
+      setLocalError("Votre mot de passe ne remplit pas tous les critères de sécurité.")
+      return
+    }
 
     if (formData.password !== formData["confirm-password"]) {
       setLocalError("Les mots de passe ne correspondent pas.")
@@ -158,6 +259,9 @@ export function SignupForm({
             className="flex flex-col p-6 md:p-8"
           >
             <FieldGroup className="flex flex-col flex-1">
+              {/* Step indicator */}
+              <StepIndicator current={step} />
+
               <div className="flex flex-col items-center gap-2 text-center mb-4">
                 <h1 className="text-2xl font-bold">
                   {step === 1 && "Créer un compte"}
@@ -229,30 +333,33 @@ export function SignupForm({
                     />
                   </Field>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <Field>
-                      <FieldLabel htmlFor="password">Mot de passe</FieldLabel>
-                      <Input
-                        id="password"
-                        type="password"
-                        required
-                        minLength={8}
-                        value={formData.password}
-                        onChange={handleChange}
-                      />
-                    </Field>
-                    <Field>
-                      <FieldLabel htmlFor="confirm-password">Confirmer</FieldLabel>
-                      <Input
-                        id="confirm-password"
-                        type="password"
-                        required
-                        minLength={8}
-                        value={formData["confirm-password"]}
-                        onChange={handleChange}
-                      />
-                    </Field>
-                  </div>
+                  <Field>
+                    <FieldLabel htmlFor="password">Mot de passe</FieldLabel>
+                    <PasswordInput
+                      id="password"
+                      required
+                      minLength={8}
+                      value={formData.password}
+                      onChange={handleChange}
+                    />
+                    <PasswordStrength password={formData.password} className="mt-2" />
+                  </Field>
+
+                  <Field>
+                    <FieldLabel htmlFor="confirm-password">Confirmer le mot de passe</FieldLabel>
+                    <PasswordInput
+                      id="confirm-password"
+                      required
+                      minLength={8}
+                      value={formData["confirm-password"]}
+                      onChange={handleChange}
+                    />
+                    {formData["confirm-password"] && formData.password !== formData["confirm-password"] && (
+                      <p className="text-[11px] text-destructive mt-1">
+                        Les mots de passe ne correspondent pas
+                      </p>
+                    )}
+                  </Field>
 
                   <div className="flex-1" />
 
@@ -354,7 +461,7 @@ export function SignupForm({
                     >
                       {registerMutation.isPending ? "Création..." : "Créer le compte"}
                     </Button>
-                    
+
                     <FieldDescription className="text-center">
                       Déjà un compte ?{" "}
                       <Link
@@ -394,7 +501,7 @@ export function SignupForm({
                         setVerificationCode(value)
                         if (localError) setLocalError("")
                       }}
-                      onKeyPress={(e) => {
+                      onKeyDown={(e) => {
                         if (e.key === "Enter" && verificationCode.length === 6) {
                           handleVerifyCode()
                         }

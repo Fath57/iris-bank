@@ -1,41 +1,25 @@
 import type { Account } from "@/types/Account";
 
-export const mockAccounts: Account[] = [
+export const mockAccounts: Omit<Account, 'userId' | 'createdAt' | 'updatedAt'>[] = [
   {
-    id: "1",
-    name: "Compte courant",
-    type: "courant",
-    subtype: "Compte principal",
+    id: 1,
     iban: "FR76 •••• •••• 4821",
+    type: "CHECKING",
     balance: 1243.22,
-    recentTransactions: [
-      { id: "t1", label: "Virement reçu — Salaire", date: "18 mars", amount: 2400.0 },
-      { id: "t2", label: "Retrait DAB", date: "17 mars", amount: -80.0 },
-      { id: "t3", label: "Paiement CB — Carrefour", date: "15 mars", amount: -62.4 },
-    ],
+    status: "ACTIVE",
   },
   {
-    id: "2",
-    name: "Livret A",
-    type: "epargne",
-    subtype: "Épargne réglementée",
+    id: 2,
     iban: "FR76 •••• •••• 9034",
+    type: "SAVINGS",
     balance: 3600.0,
-    recentTransactions: [
-      { id: "t4", label: "Dépôt", date: "1 mars", amount: 200.0 },
-      { id: "t5", label: "Intérêts annuels", date: "1 janv.", amount: 72.0 },
-    ],
+    status: "ACTIVE",
   },
   {
-    id: "3",
-    name: "Compte joint",
-    type: "joint",
-    subtype: "Compte partagé",
+    id: 3,
     iban: "FR76 •••• •••• 2210",
+    type: "BUSINESS",
     balance: -16.68,
-    recentTransactions: [
-      { id: "t6", label: "Prélèvement EDF", date: "19 mars", amount: -134.0 },
-      { id: "t7", label: "Virement reçu", date: "18 mars", amount: 120.0 },
-    ],
+    status: "ACTIVE",
   },
 ];

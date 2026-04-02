@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon --legacy-watch --exec tsx src/server.ts",
+    "start": "node --import tsx src/server.ts",
     "studio": "dotenv -e .env.local -- prisma studio",
     "seed": "dotenv -e .env.local -- tsx prisma/seed.ts",
     "test": "echo \"Error: no test specified\" && exit 1"

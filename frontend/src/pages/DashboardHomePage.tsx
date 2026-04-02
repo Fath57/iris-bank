@@ -9,7 +9,7 @@ export default function DashboardPage() {
     <div className="flex flex-col gap-6 p-4 sm:p-6">
       <StatsCards />
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 mt-4">
         {/* Recent transactions */}
         <div className="lg:col-span-3">
           <div className="flex items-center justify-between mb-5">

@@ -34,7 +34,19 @@ export default function DepositWithdrawalPage() {
     );
   }
 
-  return <DepositWithdrawalContent accounts={data.accounts} />;
+  const activeAccounts = data.accounts.filter(
+    (account: { status: string }) => account.status === "ACTIVE"
+  );
+
+  if (activeAccounts.length === 0) {
+    return (
+      <div className="p-6 text-center text-muted-foreground border border-border rounded-xl m-6">
+        Vous n'avez aucun compte actif disponible pour cette opération.
+      </div>
+    );
+  }
+
+  return <DepositWithdrawalContent accounts={activeAccounts} />;
 }
 
 function DepositWithdrawalContent({ accounts }: { accounts: any[] }) {

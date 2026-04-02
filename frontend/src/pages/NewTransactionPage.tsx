@@ -19,13 +19,15 @@ export default function NewTransactionPage() {
   const verifyMutation = useVerifyTransaction();
   const executeMutation = useExecuteTransaction();
 
-  const accounts = accountsData?.accounts || [];
+  const accounts = (accountsData?.accounts || []).filter(
+    (account: { status: string }) => account.status === "ACTIVE"
+  );
 
   useEffect(() => {
     if (accounts.length > 0 && !values) {
       setValues({
         mode: "externe",
-        fromAccountName: accountTypeLabels[accounts[0].type] ?? "Compte Principal",
+        fromAccountName: accountTypeLabels[accounts[0].type as keyof typeof accountTypeLabels] ?? "Compte Principal",
         fromAccountIban: accounts[0].iban,
         fromAccountBalance: accounts[0].balance,
         toBeneficiaryName: "",

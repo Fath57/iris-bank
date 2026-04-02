@@ -3,11 +3,11 @@ FROM node:22-slim AS build
 
 WORKDIR /app
 
-COPY frontend/package.json frontend/package-lock.json* ./
+COPY package.json package-lock.json* ./
 
 RUN npm ci
 
-COPY frontend/ .
+COPY . .
 
 RUN npm run build
 
@@ -21,10 +21,10 @@ RUN rm /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist /usr/share/nginx/html
 
 # Copy nginx config template (NOT in /etc/nginx/templates/ to avoid auto-envsubst)
-COPY frontend/nginx.conf.template /etc/nginx/nginx.conf.template
+COPY nginx.conf.template /etc/nginx/nginx.conf.template
 
 # Copy custom entrypoint
-COPY frontend/entrypoint.sh /entrypoint.sh
+COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 EXPOSE 5000

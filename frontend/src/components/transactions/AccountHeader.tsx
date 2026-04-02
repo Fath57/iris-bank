@@ -33,7 +33,7 @@ export default function AccountHeader({
           value={String(selectedId)}
           onValueChange={(v) => onSelect(Number(v))}
         >
-          <SelectTrigger className="h-10 w-full sm:w-[280px] font-mono text-sm">
+          <SelectTrigger className="h-10 w-full sm:w-74 font-mono text-sm">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

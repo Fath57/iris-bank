@@ -1,5 +1,5 @@
 import express from "express";
-import { create, getAccountById, getStats, getUserAccounts } from "../controller/bankAccount.controller.js";
+import { closeAccount, create, getAccountById, getStats, getUserAccounts } from "../controller/bankAccount.controller.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
 import { validateRequest } from "../middleware/validateRequest.middleware.js";
 import { createBankAccountSchema } from "../validators/bankAccount.validators.js";
@@ -16,7 +16,6 @@ router.get("/stats", getStats);
 
 router.get("/:id", getAccountById);
 
-
-// router.delete("/:id", delete);
+router.patch("/:id/close", closeAccount);
 
 export default router;

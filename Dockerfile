@@ -9,9 +9,6 @@ RUN npm ci
 
 COPY frontend/ .
 
-ARG VITE_API_URL
-ENV VITE_API_URL=$VITE_API_URL
-
 RUN npm run build
 
 # Stage 2: Serve with nginx

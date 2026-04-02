@@ -9,12 +9,13 @@ export interface NewBeneficiary {
   iban: string;
 }
 
-interface AddBeneficiaryModalProps {
+export interface AddBeneficiaryModalProps {
   onAdd: (b: NewBeneficiary) => void;
   onClose: () => void;
+  isPending?: boolean;
 }
 
-export function AddBeneficiaryModal({ onAdd, onClose }: AddBeneficiaryModalProps) {
+export function AddBeneficiaryModal({ onAdd, onClose, isPending }: AddBeneficiaryModalProps) {
   const [name, setName] = useState("");
   const [iban, setIban] = useState("");
 
@@ -60,7 +61,7 @@ export function AddBeneficiaryModal({ onAdd, onClose }: AddBeneficiaryModalProps
           <Button variant="outline" size="sm" className="flex-1 text-xs" onClick={onClose}>
             Annuler
           </Button>
-          <Button size="sm" className="flex-1 text-xs" disabled={!isValid} onClick={handleAdd}>
+          <Button size="sm" className="flex-1 text-xs" disabled={!isValid || isPending} onClick={handleAdd}>
             Ajouter
           </Button>
         </div>

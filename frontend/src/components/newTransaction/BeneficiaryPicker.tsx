@@ -24,7 +24,7 @@ export function BeneficiaryPicker({ selectedIban, onSelect }: BeneficiaryPickerP
   const addMutation = useAddBeneficiary();
 
   const filtered = beneficiaries.filter(
-    (b) =>
+    (b: { name: string; iban: string }) =>
       b.name.toLowerCase().includes(search.toLowerCase()) ||
       b.iban.replace(/\s/g, "").includes(search.replace(/\s/g, ""))
   );
@@ -73,7 +73,7 @@ export function BeneficiaryPicker({ selectedIban, onSelect }: BeneficiaryPickerP
           ) : filtered.length === 0 ? (
             <p className="text-xs text-muted-foreground/50 text-center py-3">Aucun bénéficiaire</p>
           ) : (
-            filtered.map((b) => {
+            filtered.map((b: { id: string; name: string; iban: string }) => {
               const selected = b.iban === selectedIban;
               return (
                 <button

@@ -16,7 +16,7 @@ interface TransactionRowProps {
   isLast?: boolean;
 }
 
-export function TransactionRow({ transaction: tx, isLast }: TransactionRowProps) {
+export function TransactionRow({ transaction: tx }: TransactionRowProps) {
   const cfg = txConfig[tx.type];
   const Icon = ICONS[cfg.icon as keyof typeof ICONS] || CreditCard;
 

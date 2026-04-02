@@ -37,7 +37,7 @@ export function useDepositWithdrawalForm({ initialAccountId }: UseDepositWithdra
     setError("");
   };
 
-  const handleSubmit = (currentBalance: number, isOverdraft: boolean) => {
+  const handleSubmit = (_currentBalance: number, isOverdraft: boolean) => {
     setError("");
     if (!isValid) { setError("Veuillez saisir un montant valide."); return; }
     if (isOverdraft) { setError("Solde insuffisant pour ce retrait."); return; }

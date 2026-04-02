@@ -7,7 +7,7 @@ import { ConfirmTransactionModal } from "@/components/newTransaction/ConfirmTran
 import type { TransactionFormValues } from "@/types/TransactionForm";
 import { useAccounts } from "@/hooks/useAccounts";
 import { useVerifyTransaction, useExecuteTransaction } from "@/hooks/useTransactions";
-import { accountTypeLabels } from "@/data/accountDetails";
+import { accountTypeLabels, type AccountType } from "@/data/accountDetails";
 import { toast } from "sonner";
 
 export default function NewTransactionPage() {
@@ -25,7 +25,7 @@ export default function NewTransactionPage() {
     if (accounts.length > 0 && !values) {
       setValues({
         mode: "externe",
-        fromAccountName: accountTypeLabels[accounts[0].type] ?? "Compte Principal",
+        fromAccountName: accountTypeLabels[accounts[0].type as AccountType] ?? "Compte Principal",
         fromAccountIban: accounts[0].iban,
         fromAccountBalance: accounts[0].balance,
         toBeneficiaryName: "",

@@ -94,7 +94,7 @@ export default function TransactionsTable({ transactions }: TransactionsTablePro
               paginated.map((t) => {
                 const config = typeConfig[t.type];
                 const label = t.description ?? (t.beneficiary ? t.beneficiary.name : "—");
-                const isCredit = t.amount >= 0;
+                const isCredit = t.type === "DEPOSIT";
                 return (
                   <TableRow
                     key={t.id}

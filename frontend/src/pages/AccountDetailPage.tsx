@@ -7,7 +7,6 @@ import { Loader2 } from "lucide-react";
 
 export default function AccountDetailPage() {
   const { id } = useParams<{ id: string }>();
-  
   const { data: account, isLoading, isError } = useAccountDetails(id);
 
   if (isLoading) {
@@ -21,7 +20,7 @@ export default function AccountDetailPage() {
   if (isError || !account) {
     return (
       <div className="p-6 text-center text-destructive border border-destructive rounded-xl m-6">
-        Erreur lors du chargement du compte. Il est possible qu'il n'existe pas ou que vous n'y ayez pas accès.
+        Erreur lors du chargement du compte.
       </div>
     );
   }
@@ -30,6 +29,7 @@ export default function AccountDetailPage() {
     <div className="min-h-screen text-foreground p-6">
       <div className="space-y-6">
         <AccountHero
+          accountId={id!} // Passage de l'ID obligatoire ici
           type={account.type}
           status={account.status}
           balance={account.balance}

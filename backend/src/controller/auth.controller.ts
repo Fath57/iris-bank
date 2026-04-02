@@ -14,7 +14,7 @@ const register = async (req: Request, res: Response) => {
   });
 
   if (userExists) {
-    return res.status(400).json({ message: "User already exists" });
+    return res.status(400).json({ error: "Un compte avec cet email existe déjà." });
   }
 
   const salt = await bcrypt.genSalt(10);
@@ -74,12 +74,12 @@ const login = async (req: Request, res: Response) => {
   });
 
   if (!user) {
-    return res.status(401).json({ error: "Invalid email or password" });
+    return res.status(401).json({ error: "Email ou mot de passe incorrect." });
   }
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
-    return res.status(401).json({ error: "Invalid email or password" });
+    return res.status(401).json({ error: "Email ou mot de passe incorrect." });
   }
 
   // Si 2FA activé : ne pas émettre le JWT, demander le code TOTP
@@ -114,7 +114,7 @@ const verify2FA = async (req: Request, res: Response) => {
   const { userId, code } = req.body;
 
   if (!userId || !code) {
-    return res.status(400).json({ message: "userId et code requis" });
+    return res.status(400).json({ error: "userId et code requis" });
   }
 
   const user = await prisma.user.findUnique({
@@ -122,12 +122,12 @@ const verify2FA = async (req: Request, res: Response) => {
   });
 
   if (!user || !user.twoFactorEnabled || !user.twoFactorSecret) {
-    return res.status(400).json({ message: "2FA non configuré pour cet utilisateur" });
+    return res.status(400).json({ error: "2FA non configuré pour cet utilisateur" });
   }
 
   const isValid = await verifyTOTP({ token: code, secret: user.twoFactorSecret });
   if (!isValid) {
-    return res.status(400).json({ message: "Code invalide ou expiré" });
+    return res.status(400).json({ error: "Code invalide ou expiré" });
   }
 
   const token = generateToken(user.id, res);

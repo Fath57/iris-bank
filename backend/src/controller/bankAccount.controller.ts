@@ -197,4 +197,51 @@ const getStats = async (req: Request, res: Response) => {
   }
 };
 
-export { create, getUserAccounts, getAccountById, getStats };
+const closeAccount = async (req: Request, res: Response) => {
+  try {
+    const accountId = Number(req.params.id);
+    
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: "Non autorisé" });
+    }
+    const userId = Number(req.user.id);
+
+    const account = await prisma.bankAccount.findUnique({
+      where: { id: accountId }
+    });
+
+    if (!account) {
+      return res.status(404).json({ message: "Compte introuvable" });
+    }
+
+    if (account.userId !== userId) {
+      return res.status(403).json({ message: "Accès refusé à ce compte" });
+    }
+
+    if (Number(account.balance) !== 0) {
+      return res.status(400).json({ 
+        message: "Impossible de clôturer le compte. Le solde doit être de 0.",
+        currentBalance: Number(account.balance)
+      });
+    }
+
+    const closedAccount = await prisma.bankAccount.update({
+      where: { id: accountId },
+      data: { 
+        status: "CLOSED" 
+      }
+    });
+
+    return res.status(200).json({
+      status: "success",
+      message: "Le compte a été clôturé avec succès",
+      data: closedAccount
+    });
+
+  } catch (error) {
+    console.error("Erreur lors de la clôture du compte:", error);
+    return res.status(500).json({ message: "Erreur interne du serveur" });
+  }
+};
+
+export { create, getUserAccounts, getAccountById, getStats, closeAccount };
